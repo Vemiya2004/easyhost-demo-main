@@ -30,10 +30,10 @@ const AboutSection = () => (
         className="text-center mb-12"
       >
         <h2 className="font-display text-3xl sm:text-4xl font-bold mb-4">
-          About <span className="text-gradient">EasyHost LK</span>
+          About <span className="text-gradient">EasyHost </span>
         </h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          EasyHost LK is a premium frontend demo hosting brand experience. We help users explore domains, hosting, and VPS in a clean, elegant interface — designed for conversion and clarity.
+          EasyHost  is a premium frontend demo hosting brand experience. We help users explore domains, hosting, and VPS in a clean, elegant interface — designed for conversion and clarity.
         </p>
       </motion.div>
 

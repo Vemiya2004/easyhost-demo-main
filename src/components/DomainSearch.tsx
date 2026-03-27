@@ -6,7 +6,7 @@ const REFERRAL = "https://www.hostinger.com?REFERRALCODE=CJRSONEZBJNV";
 
 const TAKEN_DOMAINS = [
   "google.com", "facebook.com", "youtube.com", "openai.com",
-  "amazon.com", "hostinger.com", "netflix.com", "menuos.com", "easyhostlk.com",
+  "amazon.com", "hostinger.com", "netflix.com", "menuos.com", "easyhost.com",
 ];
 
 const EXTENSIONS = [".com", ".net", ".org", ".online", ".site", ".store"];

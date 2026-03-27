@@ -30,9 +30,7 @@ const HeroSection = ({ onScrollTo, onTabSwitch }: HeroProps) => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 glass rounded-full text-xs text-primary mb-6">
-              <Zap className="w-3 h-3" /> Premium Hosting Solutions
-            </div>
+            
             <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               Premium Hosting
               <br />
@@ -86,7 +84,7 @@ const HeroSection = ({ onScrollTo, onTabSwitch }: HeroProps) => {
                 <div className="w-3 h-3 rounded-full bg-red-500/80" />
                 <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                 <div className="w-3 h-3 rounded-full bg-green-500/80" />
-                <span className="text-xs text-muted-foreground ml-2">EasyHost LK Dashboard</span>
+                <span className="text-xs text-muted-foreground ml-2">EasyHost  Dashboard</span>
               </div>
               
               <div className="grid grid-cols-3 gap-3">

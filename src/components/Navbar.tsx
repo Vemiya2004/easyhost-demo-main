@@ -37,7 +37,7 @@ const Navbar = ({ onScrollTo, onTabSwitch }: NavbarProps) => {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <button onClick={() => onScrollTo("hero")} className="font-display text-xl font-bold text-gradient">
-            EasyHost LK
+            EasyHost 
           </button>
 
           {/* Desktop Nav */}
