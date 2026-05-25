@@ -852,6 +852,7 @@
       flex: 1;
       min-height: 0;
       position: relative;
+      padding-bottom: 60px;
     }
 
     #map-el {
@@ -913,7 +914,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: relative;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      box-sizing: border-box;
       padding: 0 clamp(16px, 3vw, 28px);
       background: var(--white);
       border-top: 1px solid var(--border);
@@ -2244,15 +2250,6 @@
         // Store marker on state so other functions can reference it
         state.mapMarker = marker;
       });
-
-      // Ensure touch events don't interfere with button clicks on mobile
-      const captureBtn = document.getElementById('capture-btn');
-      if (captureBtn) {
-        captureBtn.addEventListener('touchend', (e) => {
-          e.preventDefault();
-          captureMap();
-        });
-      }
     }
 
     async function captureMap() {
