@@ -137,7 +137,7 @@
     #page-map.active {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 100dvh;
       overflow: hidden;
     }
 
@@ -913,12 +913,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: relative;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      box-sizing: border-box;
       padding: 0 clamp(16px, 3vw, 28px);
       background: var(--white);
       border-top: 1px solid var(--border);
       flex-shrink: 0;
-      z-index: 1000;
+      z-index: 1001;
+      pointer-events: auto;
     }
 
     .map-hint-text {
@@ -1505,12 +1511,19 @@
       display: flex;
       align-items: center;
       gap: 20px;
-      z-index: 1000;
+      z-index: 999;
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       width: max-content;
       max-width: 90vw;
+      pointer-events: none;
+    }
+
+    .cookie-banner.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
     }
 
     @media (max-width: 600px) {
@@ -1519,11 +1532,6 @@
         text-align: center;
         gap: 12px;
       }
-    }
-
-    .cookie-banner.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
     }
 
     .cookie-text {
@@ -1933,7 +1941,7 @@
     </div>
     <div class="map-bar-bottom">
       <span class="map-hint-text">Drag and scroll to frame your city</span>
-      <button class="btn btn-primary btn-sm" onclick="captureMap()">Add Your Photo →</button>
+      <button class="btn btn-primary btn-sm" id="capture-btn" onclick="captureMap()">Add Your Photo →</button>
     </div>
   </div>
 
@@ -2061,6 +2069,19 @@
     /* ============================================
        STATE
     ============================================ */
+    // Fix viewport height on mobile to account for browser UI
+    function fixMapPageHeight() {
+      const mapPage = document.getElementById('page-map');
+      if (mapPage && mapPage.classList.contains('active')) {
+        mapPage.style.height = `${window.innerHeight}px`;
+      }
+    }
+
+    window.addEventListener('resize', fixMapPageHeight);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(fixMapPageHeight, 100);
+    });
+
     const state = {
       city: '', country: '', lat: 0, lon: 0,
       photoFile: null, photoUrl: null,
@@ -2088,7 +2109,10 @@
       const el = document.getElementById('page-' + name);
       if (el) el.classList.add('active');
       window.scrollTo(0, 0);
-      if (name === 'map') initMap();
+      if (name === 'map') {
+        initMap();
+        fixMapPageHeight();
+      }
     }
 
     function startApp() { goTo('location'); }
@@ -2982,14 +3006,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-
-
