@@ -913,12 +913,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      position: relative;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      box-sizing: border-box;
       padding: 0 clamp(16px, 3vw, 28px);
       background: var(--white);
       border-top: 1px solid var(--border);
       flex-shrink: 0;
-      z-index: 1000;
+      z-index: 1001;
+      pointer-events: auto;
     }
 
     .map-hint-text {
@@ -1505,12 +1511,19 @@
       display: flex;
       align-items: center;
       gap: 20px;
-      z-index: 1000;
+      z-index: 999;
       opacity: 0;
       transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       width: max-content;
       max-width: 90vw;
+      pointer-events: none;
+    }
+
+    .cookie-banner.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
     }
 
     @media (max-width: 600px) {
@@ -1519,11 +1532,6 @@
         text-align: center;
         gap: 12px;
       }
-    }
-
-    .cookie-banner.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
     }
 
     .cookie-text {
