@@ -76,7 +76,7 @@
       font-family: var(--font);
       background: var(--white);
       color: var(--text);
-      overflow: hidden;
+      overflow: auto;
       -webkit-font-smoothing: antialiased;
     }
 
@@ -137,7 +137,7 @@
     #page-map.active {
       display: flex;
       flex-direction: column;
-      height: 100dvh;
+      height: 100vh;
       overflow: hidden;
     }
 
@@ -1933,7 +1933,7 @@
     </div>
     <div class="map-bar-bottom">
       <span class="map-hint-text">Drag and scroll to frame your city</span>
-      <button class="btn btn-primary btn-sm" id="capture-btn" onclick="captureMap()">Add Your Photo →</button>
+      <button class="btn btn-primary btn-sm" onclick="captureMap()">Add Your Photo →</button>
     </div>
   </div>
 
@@ -2228,15 +2228,6 @@
         // Store marker on state so other functions can reference it
         state.mapMarker = marker;
       });
-
-      // Ensure touch events don't interfere with button clicks on mobile
-      const captureBtn = document.getElementById('capture-btn');
-      if (captureBtn) {
-        captureBtn.addEventListener('touchend', (e) => {
-          e.preventDefault();
-          captureMap();
-        });
-      }
     }
 
     async function captureMap() {
@@ -2252,6 +2243,11 @@
         }
       } catch (e) {
         console.error('Map capture failed:', e);
+      }
+      // Ensure main lat/lon reflect the captured pin so output uses the framed location
+      if (state.pinLngLat) {
+        state.lat = state.pinLngLat.lat;
+        state.lon = state.pinLngLat.lng;
       }
       goTo('photo');
     }
