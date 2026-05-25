@@ -6,13 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
     content="Generate a stunning stylized map portrait of any city in the world — with you in it. 100% free. No sign-up needed." />
+  <meta name="keywords"
+    content="map portrait, custom map art, free map generator, city map poster, personalized map, EasyH" />
+  <meta name="author" content="EasyH" />
+  <link rel="canonical" href="https://easyh.space" />
+  <link rel="icon" type="image/png" href="public/assets/favicon.png" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://easyh.space/" />
+  <meta property="og:title" content="EasyH — Free Map Portrait Generator" />
+  <meta property="og:description"
+    content="Generate a stunning stylized map portrait of any city in the world — with you in it. 100% free. No sign-up needed." />
+  <meta property="og:image" content="https://easyh.space/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://easyh.space/" />
+  <meta property="twitter:title" content="EasyH — Free Map Portrait Generator" />
+  <meta property="twitter:description"
+    content="Generate a stunning stylized map portrait of any city in the world — with you in it. 100% free. No sign-up needed." />
+  <meta property="twitter:image" content="https://easyh.space/og-image.jpg" />
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,700&family=Bebas+Neue&family=Oswald:wght@700&family=Montserrat:wght@700&family=Pacifico&family=Abril+Fatface&family=Dancing+Script:wght@700&family=Lobster&family=Righteous&family=Cinzel:wght@700&family=Raleway:wght@700&display=swap"
     rel="stylesheet" />
   <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="icon" type="image/png" href="public/assets/favicon.png" />
   <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
 
   <style>
@@ -524,55 +545,6 @@
       background: #0b1929;
     }
 
-    .example-img-roads {
-      position: absolute;
-      inset: 0;
-      background-image:
-        repeating-linear-gradient(42deg, transparent, transparent 16px, rgba(224, 184, 80, 0.25) 16px, rgba(224, 184, 80, 0.25) 17px),
-        repeating-linear-gradient(-35deg, transparent, transparent 24px, rgba(200, 160, 64, 0.14) 24px, rgba(200, 160, 64, 0.14) 25px),
-        repeating-linear-gradient(90deg, transparent, transparent 30px, rgba(180, 140, 50, 0.09) 30px, rgba(180, 140, 50, 0.09) 31px);
-    }
-
-    .example-img-gradient {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent 35%, rgba(5, 12, 24, 0.96) 100%);
-    }
-
-    .example-person {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 22%;
-      width: 36%;
-      opacity: 0.55;
-    }
-
-    .example-label {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 12px 10px;
-      text-align: center;
-    }
-
-    .example-label-city {
-      font-size: 13px;
-      font-weight: 700;
-      font-style: italic;
-      color: rgba(255, 255, 255, 0.88);
-    }
-
-    .example-label-country {
-      font-family: var(--mono);
-      font-size: 8px;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, 0.4);
-      margin-top: 2px;
-    }
-
     .example-card-footer {
       padding: 10px 12px;
       background: var(--white);
@@ -850,6 +822,10 @@
        PAGE 2 — MAP
     ============================================ */
     #page-map {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
       background: #0b1929;
     }
 
@@ -873,12 +849,26 @@
 
     #map-container {
       flex: 1;
+      min-height: 0;
       position: relative;
     }
 
     #map-el {
       position: absolute;
       inset: 0;
+    }
+
+    #map-preview-frame {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 75%;
+      aspect-ratio: 3/4;
+      border: 2px dashed rgba(224, 184, 80, 0.4);
+      pointer-events: none;
+      z-index: 5;
+      box-shadow: inset 0 0 40px rgba(224, 184, 80, 0.15);
     }
 
     .map-city-overlay {
@@ -922,10 +912,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
       padding: 0 clamp(16px, 3vw, 28px);
       background: var(--white);
       border-top: 1px solid var(--border);
       flex-shrink: 0;
+      z-index: 1000;
     }
 
     .map-hint-text {
@@ -1155,26 +1147,42 @@
       padding: 0;
       display: flex;
       flex-direction: column;
-      justify-content: flex-start;
-      align-items: stretch;
+      justify-content: center;
+      align-items: center;
       background: var(--bg);
+      overflow: auto;
+      min-height: calc(100vh - 60px);
+    }
+
+    #portrait-wrap {
+      position: relative;
+      height: calc(100vh - 200px);
+      max-height: 600px;
+      aspect-ratio: 3/4;
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10), 0 1px 6px rgba(0, 0, 0, 0.06);
+      background: #0b1929;
+      margin: 20px 0;
+      flex-shrink: 0;
       overflow: hidden;
     }
 
-    #output-canvas {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 90vh;
-      object-fit: contain;
-      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10), 0 1px 6px rgba(0, 0, 0, 0.06);
+    @media (max-width: 780px) {
+      #portrait-wrap {
+        height: auto;
+        width: 85vw;
+        max-width: 400px;
+        max-height: none;
+        margin: 20px auto;
+      }
     }
 
-    @media (max-width: 780px) {
-      #output-canvas {
-        width: 100vw;
-        max-height: none;
-      }
+    #output-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
     }
 
     .output-panel {
@@ -1433,6 +1441,126 @@
         transform: rotate(360deg);
       }
     }
+
+    /* ============================================
+       ANIMATIONS & REVEAL
+    ============================================ */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-up {
+      opacity: 0;
+      animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    .delay-4 {
+      animation-delay: 0.4s;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ============================================
+       COOKIE BANNER
+    ============================================ */
+    .cookie-banner {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--black);
+      color: var(--white);
+      padding: 16px 24px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 1000;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      width: max-content;
+      max-width: 90vw;
+    }
+
+    @media (max-width: 600px) {
+      .cookie-banner {
+        flex-direction: column;
+        text-align: center;
+        gap: 12px;
+      }
+    }
+
+    .cookie-banner.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    .cookie-text {
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .cookie-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-cookie {
+      background: var(--white);
+      color: var(--black);
+      border: none;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background var(--ease);
+    }
+
+    .btn-cookie:hover {
+      background: #eee;
+    }
+
+    .btn-cookie-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-cookie-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
   </style>
 </head>
 
@@ -1447,7 +1575,7 @@
       <nav class="header-nav">
         <a href="#how-it-works">How it works</a>
         <a href="#examples">Examples</a>
-        <a href="/dist/public/login.html">Login</a>
+        <a href="/login.html">Login</a>
       </nav>
     </header>
 
@@ -1455,17 +1583,19 @@
       <!-- Hero -->
       <section class="hero">
         <div class="hero-left">
-          <h1 class="hero-heading">Place Yourself<br>On The Map</h1>
-          <p class="hero-sub">Generate a stunning stylized map portrait of any city in the world — with you in it. 100%
+          <h1 class="hero-heading animate-up delay-1">Place Yourself<br>On The Map</h1>
+          <p class="hero-sub animate-up delay-2">Generate a stunning stylized map portrait of any city in the world —
+            with you in it. 100%
             free. No sign-up needed.</p>
-          <div class="hero-btns">
+          <div class="hero-btns animate-up delay-3">
             <button class="btn btn-primary" onclick="startApp()">Create Your Portrait →</button>
             <button class="btn btn-secondary"
               onclick="document.getElementById('examples').scrollIntoView({behavior:'smooth'})">See Examples ↓</button>
           </div>
-          <p class="hero-trust">✓ Free &nbsp;&nbsp; ✓ No signup &nbsp;&nbsp; ✓ Download in seconds</p>
+          <p class="hero-trust animate-up delay-4">✓ Free &nbsp;&nbsp; ✓ No signup &nbsp;&nbsp; ✓ Download in seconds
+          </p>
         </div>
-        <div class="hero-right">
+        <div class="hero-right animate-up delay-3">
           <div class="hero-previews">
             <div class="preview-card">
               <div class="preview-roads"></div>
@@ -1488,7 +1618,7 @@
       </section>
 
       <!-- How It Works -->
-      <section class="section" id="how-it-works">
+      <section class="section reveal" id="how-it-works">
         <span class="section-label">How It Works</span>
         <h2 class="section-heading">Three steps to your portrait</h2>
         <div class="steps-row">
@@ -1531,63 +1661,37 @@
       </section>
 
       <!-- Examples -->
-      <section class="section" id="examples">
+      <section class="section reveal" id="examples">
         <span class="section-label">Examples</span>
         <h2 class="section-heading">See what people create</h2>
         <div class="examples-grid">
           <div class="example-card">
-            <div class="example-img">
-              <div class="example-img-roads"></div>
-              <div class="example-img-gradient"></div>
-              <div class="example-label">
-                <div class="example-label-city">Tokyo</div>
-                <div class="example-label-country">Japan</div>
-              </div>
+            <div class="example-img"
+              style="background-image: url('public/assets/easyh-tokyo.png'); background-size: cover; background-position: center;">
             </div>
             <div class="example-card-footer">
               <div class="example-card-name">Tokyo, Japan</div>
             </div>
           </div>
           <div class="example-card">
-            <div class="example-img" style="background:#0d1b2a;">
-              <div class="example-img-roads"
-                style="background-image:repeating-linear-gradient(58deg,transparent,transparent 18px,rgba(224,184,80,0.2) 18px,rgba(224,184,80,0.2) 19px),repeating-linear-gradient(-22deg,transparent,transparent 26px,rgba(200,160,64,0.11) 26px,rgba(200,160,64,0.11) 27px);">
-              </div>
-              <div class="example-img-gradient"></div>
-              <div class="example-label">
-                <div class="example-label-city">London</div>
-                <div class="example-label-country">United Kingdom</div>
-              </div>
+            <div class="example-img"
+              style="background-image: url('public/assets/easyh-greater-london.png'); background-size: cover; background-position: center;">
             </div>
             <div class="example-card-footer">
               <div class="example-card-name">London, UK</div>
             </div>
           </div>
           <div class="example-card">
-            <div class="example-img" style="background:#091520;">
-              <div class="example-img-roads"
-                style="background-image:repeating-linear-gradient(30deg,transparent,transparent 12px,rgba(224,184,80,0.28) 12px,rgba(224,184,80,0.28) 13px),repeating-linear-gradient(-50deg,transparent,transparent 20px,rgba(200,160,64,0.13) 20px,rgba(200,160,64,0.13) 21px);">
-              </div>
-              <div class="example-img-gradient"></div>
-              <div class="example-label">
-                <div class="example-label-city">New York</div>
-                <div class="example-label-country">United States</div>
-              </div>
+            <div class="example-img"
+              style="background-image: url('public/assets/easyh-new-york.png'); background-size: cover; background-position: center;">
             </div>
             <div class="example-card-footer">
               <div class="example-card-name">New York, USA</div>
             </div>
           </div>
           <div class="example-card">
-            <div class="example-img" style="background:#0e1b2c;">
-              <div class="example-img-roads"
-                style="background-image:repeating-linear-gradient(65deg,transparent,transparent 20px,rgba(224,184,80,0.19) 20px,rgba(224,184,80,0.19) 21px),repeating-linear-gradient(-15deg,transparent,transparent 28px,rgba(200,160,64,0.1) 28px,rgba(200,160,64,0.1) 29px);">
-              </div>
-              <div class="example-img-gradient"></div>
-              <div class="example-label">
-                <div class="example-label-city">Paris</div>
-                <div class="example-label-country">France</div>
-              </div>
+            <div class="example-img"
+              style="background-image: url('public/assets/easyh-paris.png'); background-size: cover; background-position: center;">
             </div>
             <div class="example-card-footer">
               <div class="example-card-name">Paris, France</div>
@@ -1598,7 +1702,7 @@
       </section>
 
       <!-- Features -->
-      <section class="section">
+      <section class="section reveal">
         <span class="section-label">Features</span>
         <h2 class="section-heading">Everything you need</h2>
         <div class="features-grid">
@@ -1750,7 +1854,7 @@
       </section>
 
       <!-- CTA -->
-      <section class="cta-section">
+      <section class="cta-section reveal">
         <h2 class="cta-heading">Ready to see yourself on the map?</h2>
         <p class="cta-sub">Takes less than 60 seconds. No sign-up needed.</p>
         <button class="btn btn-primary" style="font-size:16px;padding:16px 36px;" onclick="startApp()">Create Your
@@ -1761,9 +1865,9 @@
         <span class="footer-copy">© 2026 EasyH · easyh.space</span>
         <span class="footer-center">Map data © OpenStreetMap contributors</span>
         <div class="footer-links">
-          <a href="/dist/public/privacy.html">Privacy Policy</a>
-          <a href="/dist/public/terms.html">Terms of Service</a>
-          <a href="/dist/public/login.html">Login</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Service</a>
+          <a href="/login.html">Login</a>
         </div>
       </footer>
     </div>
@@ -1819,6 +1923,7 @@
     </div>
     <div id="map-container">
       <div id="map-el"></div>
+      <div id="map-preview-frame"></div>
       <div class="map-city-overlay">
         <div class="map-city-name" id="map-city-name">—</div>
         <div class="map-divider"></div>
@@ -1876,6 +1981,13 @@
         </div>
       </div>
 
+      <div
+        style="font-size: 13px; color: #666; background: #f9f9f9; padding: 12px; border-radius: 6px; border: 1px solid #eee; margin-bottom: 24px; line-height: 1.5;">
+        💡 <strong>Tip:</strong> If the background isn't removed cleanly, you can use <a href="https://www.remove.bg"
+          target="_blank" style="color: #000; text-decoration: underline;">remove.bg</a> to remove it first. Then upload
+        that new image here and select <strong>"With Background"</strong>
+      </div>
+
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
         <button class="btn btn-primary" onclick="generatePortrait()">Generate Portrait →</button>
         <button class="btn btn-secondary btn-sm" onclick="skipPhoto()">Skip Photo</button>
@@ -1894,7 +2006,10 @@
     </div>
     <div class="output-body">
       <div class="output-canvas-col">
-        <canvas id="output-canvas" width="900" height="1200"></canvas>
+        <div id="portrait-wrap">
+          <div id="output-map-el" style="position:absolute; inset: 0;"></div>
+          <canvas id="output-canvas" width="900" height="1200"></canvas>
+        </div>
         <div class="portrait-toolbar">
           <div class="toolbar-section">
             <span class="toolbar-label">Font</span>
@@ -1947,19 +2062,20 @@
     ============================================ */
     const state = {
       city: '', country: '', lat: 0, lon: 0,
-      mapSnapshot: null,
       photoFile: null, photoUrl: null,
       removeBackground: true,
       mapInstance: null,
       generationId: null,
       cityFont: 'Inter',
       cityTextStyle: 'normal',
-      mapCenter: null,   // {lng, lat} — map center at capture time
       mapZoom: 0,
-      mapBounds: null,   // {swLng, swLat, neLng, neLat}
-      pinXRatio: 0.5,   // pin position as fraction of map canvas (0–1)
-      pinYRatio: 0.5,
+      pinLngLat: null,
+      processedPhoto: null,
     };
+
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? ''
+      : 'https://easyhost-backend.onrender.com';
 
     /* ============================================
        PAGE NAVIGATION
@@ -1977,11 +2093,13 @@
     function startApp() { goTo('location'); }
     function startOver() {
       state.city = ''; state.country = ''; state.lat = 0; state.lon = 0;
-      state.mapSnapshot = null; state.photoFile = null; state.photoUrl = null;
+      state.photoFile = null; state.photoUrl = null;
       state.removeBackground = true; state.generationId = null;
       state.cityFont = 'Inter'; state.cityTextStyle = 'normal';
-      state.mapCenter = null; state.mapZoom = 0; state.mapBounds = null;
-      state.pinXRatio = 0.5; state.pinYRatio = 0.5;
+      state.mapZoom = 0;
+      state.pinLngLat = null;
+      state.processedPhoto = null;
+
       removePhoto();
       document.getElementById('city-input').value = '';
       goTo('landing');
@@ -2046,7 +2164,7 @@
       btn.innerHTML = '<span class="spin">⟳</span> Locating…';
 
       try {
-        const r = await fetch('/api/geocode', {
+        const r = await fetch(`${API_BASE}/api/geocode`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ q }),
@@ -2062,6 +2180,14 @@
         document.getElementById('map-country-name').textContent = d.country.toUpperCase();
 
         goTo('map');
+        // Ensure map recenters after the map page and map instance are ready
+        setTimeout(() => {
+          try {
+            if (mapInst && state.lon && state.lat) {
+              mapInst.flyTo({ center: [state.lon, state.lat], zoom: 12, essential: true });
+            }
+          } catch (e) { }
+        }, 250);
       } catch {
         err.classList.add('show');
       } finally {
@@ -2093,55 +2219,27 @@
       map.on('load', () => {
         const el = document.createElement('div');
         el.style.cssText = 'width:16px;height:16px;background:#e63535;border:2px solid white;border-radius:50%;box-shadow:0 0 0 4px rgba(230,53,53,0.28)';
-        new maplibregl.Marker({ element: el }).setLngLat([state.lon, state.lat]).addTo(map);
+        // Create a draggable marker so users can fine-tune the pin position.
+        const marker = new maplibregl.Marker({ element: el, draggable: true })
+          .setLngLat([state.lon, state.lat])
+          .addTo(map);
+
+        // Store marker on state so other functions can reference it
+        state.mapMarker = marker;
       });
     }
 
     async function captureMap() {
       if (!mapInst) { goTo('photo'); return; }
       try {
-        // Wait until the map has fully rendered all tiles
-        await new Promise(resolve => {
-          const check = () => {
-            if (mapInst.loaded() && mapInst.isStyleLoaded()) {
-              resolve();
-            } else {
-              mapInst.once('idle', resolve);
-            }
-          };
-          check();
-          setTimeout(resolve, 6000); // hard timeout fallback
-        });
-
-        // Wait one more rAF tick so WebGL has flushed the current frame to the buffer
-        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-
-        // Force a re-render before capturing
-        mapInst.triggerRepaint();
-        await new Promise(resolve => requestAnimationFrame(resolve));
-
-        const canvas = mapInst.getCanvas();
-        state.mapSnapshot = canvas.toDataURL('image/png');
-
-        // Verify we got a real image (not a blank 1x1 or empty data URL)
-        if (!state.mapSnapshot || state.mapSnapshot.length < 5000) {
-          console.warn('Map snapshot appears blank, retrying…');
-          await new Promise(resolve => setTimeout(resolve, 500));
-          mapInst.triggerRepaint();
-          await new Promise(resolve => requestAnimationFrame(resolve));
-          state.mapSnapshot = mapInst.getCanvas().toDataURL('image/png');
-        }
-
-        // Store pin position as pixel ratio using map.project() — most accurate method
-        const mapCanvas = mapInst.getCanvas();
-        const mapW = mapCanvas.width;
-        const mapH = mapCanvas.height;
-        const center = mapInst.getCenter();
-        state.mapCenter = { lng: center.lng, lat: center.lat };
         state.mapZoom = mapInst.getZoom();
-        const centerPixel = mapInst.project(center);  // {x, y} in map canvas pixels
-        state.pinXRatio = centerPixel.x / mapW;        // 0–1
-        state.pinYRatio = centerPixel.y / mapH;        // 0–1
+        if (state.mapMarker && typeof state.mapMarker.getLngLat === 'function') {
+          const lngLat = state.mapMarker.getLngLat();
+          state.pinLngLat = { lng: lngLat.lng, lat: lngLat.lat };
+        } else {
+          const center = mapInst.getCenter();
+          state.pinLngLat = { lng: center.lng, lat: center.lat };
+        }
       } catch (e) {
         console.error('Map capture failed:', e);
       }
@@ -2193,170 +2291,189 @@
     /* ============================================
        PORTRAIT GENERATION
     ============================================ */
+    let outputMapInst = null;
+
+    function initOutputMap() {
+      if (!state.pinLngLat) return;
+      if (outputMapInst) { try { outputMapInst.remove(); } catch (e) { } }
+      document.getElementById('output-map-el').innerHTML = '';
+
+      outputMapInst = new maplibregl.Map({
+        container: 'output-map-el',
+        style: darkGoldStyle,
+        center: [state.pinLngLat.lng, state.pinLngLat.lat],
+        zoom: state.mapZoom || 12,
+        attributionControl: false,
+        preserveDrawingBuffer: true,
+      });
+
+      outputMapInst.on('move', () => {
+        redrawOutputCanvas();
+      });
+
+      outputMapInst.on('load', () => {
+        redrawOutputCanvas();
+      });
+    }
+
+    function redrawOutputCanvas() {
+      const canvas = document.getElementById('output-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = 900, H = 1200;
+
+      ctx.clearRect(0, 0, W, H);
+
+      // 1. Vignette
+      const vig = ctx.createRadialGradient(W / 2, H * 0.42, H * 0.18, W / 2, H * 0.42, H * 0.82);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(0.65, 'rgba(0,0,0,0)');
+      vig.addColorStop(1, 'rgba(0,0,0,0.55)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
+
+      // 2. Bottom gradient
+      const btm = ctx.createLinearGradient(0, H * 0.73, 0, H);
+      btm.addColorStop(0, 'rgba(0,0,0,0)');
+      btm.addColorStop(0.45, 'rgba(0,0,0,0.72)');
+      btm.addColorStop(1, 'rgba(0,0,0,0.95)');
+      ctx.fillStyle = btm;
+      ctx.fillRect(0, 0, W, H);
+
+      // 3. Top overlay
+      const topOvl = ctx.createLinearGradient(0, 0, 0, H * 0.38);
+      topOvl.addColorStop(0, 'rgba(0,0,0,0.45)');
+      topOvl.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = topOvl;
+      ctx.fillRect(0, 0, W, H * 0.38);
+
+      // 4. Photo
+      if (state.processedPhoto) {
+        const { img, x, y, w, h } = state.processedPhoto;
+        ctx.save();
+        ctx.shadowColor = !state.removeBackground ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.55)';
+        ctx.shadowBlur = !state.removeBackground ? 48 : 40;
+        ctx.shadowOffsetY = !state.removeBackground ? 24 : 20;
+        ctx.drawImage(img, x, y, w, h);
+        ctx.restore();
+      }
+
+      // 5. Pin
+      let pinX = W / 2;
+      let pinY = H / 2;
+      if (outputMapInst && state.pinLngLat) {
+        const p = outputMapInst.project([state.pinLngLat.lng, state.pinLngLat.lat]);
+        const mapCanvas = outputMapInst.getContainer();
+        const rect = mapCanvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          pinX = (p.x / rect.width) * W;
+          pinY = (p.y / rect.height) * H;
+        }
+      }
+
+      // If pin overlaps photo, push it outside
+      if (state.processedPhoto) {
+        const { x: px, y: py, w: photoW, h: photoH } = state.processedPhoto;
+        const inside = pinX >= px && pinX <= px + photoW && pinY >= py && pinY <= py + photoH;
+        if (inside) {
+          const topDist = pinY - py;
+          const bottomDist = py + photoH - pinY;
+          const leftDist = pinX - px;
+          const rightDist = px + photoW - pinX;
+          const minDist = Math.min(topDist, bottomDist, leftDist, rightDist);
+          const margin = 36;
+          if (minDist === topDist) pinY = Math.max(24, py - margin);
+          else if (minDist === bottomDist) pinY = Math.min(H - 24, py + photoH + margin);
+          else if (minDist === leftDist) pinX = Math.max(24, px - margin);
+          else pinX = Math.min(W - 24, px + photoW + margin);
+        }
+      }
+
+      drawPin(ctx, pinX, pinY, 16);
+
+      // 6. City text
+      drawCityText(ctx, state.city, W, H, pinX, pinY);
+
+      // 7. Bottom text
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.60)';
+      ctx.font = `400 ${W * 0.028}px 'DM Mono', monospace`;
+      ctx.textAlign = 'center'; ctx.letterSpacing = '3px';
+      ctx.fillText(state.country.toUpperCase(), W / 2, H * 0.875);
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.30)'; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(W / 2 - 60, H * 0.891);
+      ctx.lineTo(W / 2 + 60, H * 0.891);
+      ctx.stroke();
+      ctx.restore();
+
+      if (state.lat && state.lon) {
+        const lat = state.lat.toFixed(4);
+        const lon = state.lon.toFixed(4);
+        const coords = `${Math.abs(lat)}°${parseFloat(lat) >= 0 ? 'N' : 'S'}  ${Math.abs(lon)}°${parseFloat(lon) >= 0 ? 'E' : 'W'}`;
+        ctx.save();
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
+        ctx.font = `400 ${W * 0.018}px 'DM Mono', monospace`;
+        ctx.textAlign = 'center';
+        ctx.fillText(coords, W / 2, H * 0.910);
+        ctx.restore();
+      }
+
+      // 8. Watermark
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.13)';
+      ctx.font = `400 ${W * 0.016}px Inter, sans-serif`;
+      ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+      ctx.fillText('easyh.space', W - 18, H - 18);
+      ctx.restore();
+    }
+
     async function generatePortrait() {
       showGen(true);
       await delay(50);
       try {
-        const canvas = document.getElementById('output-canvas');
-        const ctx = canvas.getContext('2d');
         const W = 900, H = 1200;
-        canvas.width = W; canvas.height = H;
 
-        // 1. MAP as full background — scaled to fill entire canvas
-        let mapImg = null;  // hoisted so pin position code can reference it
-        if (state.mapSnapshot) {
-          mapImg = await loadImg(state.mapSnapshot);
-          // Cover-fill: maintain aspect ratio, fill entire canvas
-          const mw = mapImg.naturalWidth || mapImg.width;
-          const mh = mapImg.naturalHeight || mapImg.height;
-          const scale = Math.max(W / mw, H / mh);
-          const dw = mw * scale, dh = mh * scale;
-          const dx = (W - dw) / 2, dy = (H - dh) / 2;
-          ctx.drawImage(mapImg, dx, dy, dw, dh);
-        } else {
-          // Fallback dark gold map placeholder
-          ctx.fillStyle = '#0b1929';
-          ctx.fillRect(0, 0, W, H);
-          ctx.save();
-          for (let i = 0; i < 60; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const len = 80 + Math.random() * 220;
-            ctx.strokeStyle = `rgba(224,184,80,${0.06 + Math.random() * 0.22})`;
-            ctx.lineWidth = 0.5 + Math.random() * 1.5;
-            ctx.beginPath();
-            const x1 = Math.random() * W, y1 = Math.random() * H;
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x1 + Math.cos(angle) * len, y1 + Math.sin(angle) * len);
-            ctx.stroke();
-          }
-          ctx.restore();
-        }
-
-        // 2. Edge-only vignette — dark at borders, fully transparent in center
-        //    Uses a wide radial so the center area (where person stands) stays clear
-        const vig = ctx.createRadialGradient(W / 2, H * 0.42, H * 0.18, W / 2, H * 0.42, H * 0.82);
-        vig.addColorStop(0, 'rgba(0,0,0,0)');
-        vig.addColorStop(0.65, 'rgba(0,0,0,0)');
-        vig.addColorStop(1, 'rgba(0,0,0,0.55)');
-        ctx.fillStyle = vig;
-        ctx.fillRect(0, 0, W, H);
-
-        // 3. Bottom gradient — ONLY the bottom 25% for text legibility
-        //    Must NOT cover the middle area where the person stands
-        const btm = ctx.createLinearGradient(0, H * 0.73, 0, H);
-        btm.addColorStop(0, 'rgba(0,0,0,0)');
-        btm.addColorStop(0.45, 'rgba(0,0,0,0.72)');
-        btm.addColorStop(1, 'rgba(0,0,0,0.95)');
-        ctx.fillStyle = btm;
-        ctx.fillRect(0, 0, W, H);
-
-        // 4. Subtle top darkening so pin + city name text is always legible over the map
-        const topOvl = ctx.createLinearGradient(0, 0, 0, H * 0.38);
-        topOvl.addColorStop(0, 'rgba(0,0,0,0.45)');
-        topOvl.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = topOvl;
-        ctx.fillRect(0, 0, W, H * 0.38);
-
-        // 5. Person photo — feet at absolute bottom edge
+        // Process photo once
         if (state.photoUrl) {
-          const img = await loadImg(state.photoUrl);
-          const photoH = H * 0.58;
-          const photoW = (img.naturalWidth / img.naturalHeight) * photoH;
-          const px = (W - photoW) / 2;
-          const py = H - photoH;  // feet touch very bottom edge
+          let finalImgSrc = state.photoUrl;
 
-          if (!state.removeBackground) {
-            ctx.save();
-            ctx.shadowColor = 'rgba(0,0,0,0.6)'; ctx.shadowBlur = 48; ctx.shadowOffsetY = 24;
-            ctx.drawImage(img, px, py, photoW, photoH);
-            ctx.restore();
-          } else {
-            const cutout = removeBG(img, photoW, photoH);
-            ctx.save();
-            ctx.shadowColor = 'rgba(0,0,0,0.55)'; ctx.shadowBlur = 40; ctx.shadowOffsetY = 20;
-            ctx.drawImage(cutout, px, py, photoW, photoH);
-            ctx.restore();
+          if (state.removeBackground && state.photoFile) {
+            const formData = new FormData();
+            formData.append('image_file', state.photoFile);
+
+            try {
+              document.querySelector('.gen-sub').textContent = 'Removing background via AI…';
+              const res = await fetch(`${API_BASE}/api/removebg`, { method: 'POST', body: formData });
+              if (!res.ok) throw new Error('API failed');
+              const blob = await res.blob();
+              finalImgSrc = URL.createObjectURL(blob);
+            } catch (e) {
+              console.error('RemoveBG API failed, falling back to local method', e);
+              document.querySelector('.gen-sub').textContent = 'Using local background removal…';
+            }
           }
-        }
 
-        // 6. Red location pin — pixel ratio from map.project() at capture time
-        //    pinXRatio/pinYRatio are fractions of the map canvas at the moment of capture.
-        //    Scale them to the output canvas, accounting for cover-fill offset.
-        let pinX, pinY;
-        if (mapImg) {
-          const mw = mapImg.naturalWidth || mapImg.width;
-          const mh = mapImg.naturalHeight || mapImg.height;
-          const sc = Math.max(W / mw, H / mh);
-          const dx = (W - mw * sc) / 2, dy = (H - mh * sc) / 2;
-          pinX = dx + state.pinXRatio * mw * sc;
-          pinY = dy + state.pinYRatio * mh * sc;
-        } else {
-          pinX = state.pinXRatio * W;
-          pinY = state.pinYRatio * H;
-        }
-        // Clamp so pin stays inside canvas
-        pinX = Math.max(24, Math.min(W - 24, pinX));
-        pinY = Math.max(24, Math.min(H - 24, pinY));
-        // If the pin would overlap the placed photo, nudge it off the photo
-        if (state.photoUrl) {
+          const img = await loadImg(finalImgSrc);
           const photoH = H * 0.58;
           const photoW = (img.naturalWidth / img.naturalHeight) * photoH;
           const px = (W - photoW) / 2;
           const py = H - photoH;
-          // Check overlap
-          const overlaps = pinX >= px && pinX <= px + photoW && pinY >= py && pinY <= py + photoH;
-          if (overlaps) {
-            // Prefer nudging to the right of the photo; if there's no room, nudge left
-            const rightX = px + photoW + 32;
-            const leftX = px - 32;
-            if (rightX < W - 24) pinX = rightX;
-            else if (leftX > 24) pinX = leftX;
-            else pinX = Math.max(24, Math.min(W - 24, rightX));
-          }
+
+          const requiresLocalFallback = state.removeBackground && finalImgSrc === state.photoUrl;
+
+          state.processedPhoto = {
+            img: requiresLocalFallback ? removeBG(img, photoW, photoH) : img,
+            x: px, y: py, w: photoW, h: photoH
+          };
+
+          document.querySelector('.gen-sub').textContent = 'Compositing your image';
+        } else {
+          state.processedPhoto = null;
         }
-        drawPin(ctx, pinX, pinY, 16);
-
-        // 7. City name just below the pin
-        drawCityText(ctx, state.city, W, H, pinY);
-
-        // 8. Bottom text — country + divider + coordinates (NO city name here)
-        // Country
-        ctx.save();
-        ctx.fillStyle = 'rgba(255,255,255,0.60)';
-        ctx.font = `400 ${W * 0.028}px 'DM Mono', monospace`;
-        ctx.textAlign = 'center'; ctx.letterSpacing = '3px';
-        ctx.fillText(state.country.toUpperCase(), W / 2, H * 0.875);
-        ctx.restore();
-
-        // Divider line
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255,255,255,0.30)'; ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(W / 2 - 60, H * 0.891);
-        ctx.lineTo(W / 2 + 60, H * 0.891);
-        ctx.stroke();
-        ctx.restore();
-
-        // Coordinates
-        if (state.lat && state.lon) {
-          const lat = state.lat.toFixed(4);
-          const lon = state.lon.toFixed(4);
-          const coords = `${Math.abs(lat)}°${parseFloat(lat) >= 0 ? 'N' : 'S'}  ${Math.abs(lon)}°${parseFloat(lon) >= 0 ? 'E' : 'W'}`;
-          ctx.save();
-          ctx.fillStyle = 'rgba(255,255,255,0.25)';
-          ctx.font = `400 ${W * 0.018}px 'DM Mono', monospace`;
-          ctx.textAlign = 'center';
-          ctx.fillText(coords, W / 2, H * 0.910);
-          ctx.restore();
-        }
-
-        // 9. Watermark
-        ctx.save();
-        ctx.fillStyle = 'rgba(255,255,255,0.13)';
-        ctx.font = `400 ${W * 0.016}px Inter, sans-serif`;
-        ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-        ctx.fillText('easyh.space', W - 18, H - 18);
-        ctx.restore();
 
         // Update panel
         document.getElementById('out-city').textContent = state.city;
@@ -2364,9 +2481,9 @@
         document.getElementById('d-city').textContent = state.city;
         document.getElementById('d-country').textContent = state.country;
 
-        // Log generation only once per city (not on every font/style re-render)
+        // Log generation
         if (!state.generationId) {
-          fetch('/api/generate', {
+          fetch(`${API_BASE}/api/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ city: state.city, country: state.country, lat: state.lat, lon: state.lon }),
@@ -2375,15 +2492,20 @@
 
         showGen(false);
         goTo('output');
-        // Render font+style pickers now that we have state.city
+
+        // Initialize map AFTER container is visible
+        initOutputMap();
+
         renderFontPicker();
         renderStylePicker();
+        redrawOutputCanvas();
       } catch (e) {
         console.error(e);
         showGen(false);
         goTo('output');
         renderFontPicker();
         renderStylePicker();
+        redrawOutputCanvas();
       }
     }
 
@@ -2415,15 +2537,15 @@
     function updateCityFont(font) {
       state.cityFont = font;
       renderFontPicker();
-      renderStylePicker();  // style previews update to reflect new font
-      generatePortrait();
+      renderStylePicker();
+      redrawOutputCanvas();
     }
 
     function updateCityStyle(style) {
       state.cityTextStyle = style;
       renderStylePicker();
-      renderFontPicker();   // font card previews re-render with new style context
-      generatePortrait();
+      renderFontPicker();
+      redrawOutputCanvas();
     }
 
     /* Render font picker — horizontal scrollable row of cards */
@@ -2580,7 +2702,7 @@
     /* ============================================
        CITY NAME TEXT RENDERING
     ============================================ */
-    function drawCityText(ctx, text, W, H, pinY) {
+    function drawCityText(ctx, text, W, H, pinX, pinY) {
       if (!text) return;
       const font = state.cityFont || 'Inter';
       const style = state.cityTextStyle || 'normal';
@@ -2589,6 +2711,7 @@
       const textY = pinY != null
         ? Math.min(pinY + baseSize + 20, H - 20)
         : H * 0.270;
+      const textX = pinX != null ? pinX : W / 2;
 
       ctx.save();
       ctx.fillStyle = 'rgba(255,255,255,0.95)';
@@ -2597,22 +2720,22 @@
 
       switch (style) {
         case 'arc-up':
-          _drawArcText(ctx, text, font, baseSize, W, textY, 'up');
+          _drawArcText(ctx, text, font, baseSize, W, textX, textY, 'up');
           break;
         case 'arc-down':
-          _drawArcText(ctx, text, font, baseSize, W, textY, 'down');
+          _drawArcText(ctx, text, font, baseSize, W, textX, textY, 'down');
           break;
         case 'wave':
-          _drawWaveText(ctx, text, font, baseSize, W, textY);
+          _drawWaveText(ctx, text, font, baseSize, W, textX, textY);
           break;
         case 'size-fade':
-          _drawSizeFadeText(ctx, text, font, baseSize, W, textY);
+          _drawSizeFadeText(ctx, text, font, baseSize, W, textX, textY);
           break;
         default: // 'normal'
           ctx.font = `700 ${baseSize}px '${font}', sans-serif`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'alphabetic';
-          ctx.fillText(text, W / 2, textY);
+          ctx.fillText(text, textX, textY);
           break;
       }
 
@@ -2620,7 +2743,7 @@
     }
 
     /* Arc text — characters placed along a circular arc */
-    function _drawArcText(ctx, text, font, size, W, textY, direction) {
+    function _drawArcText(ctx, text, font, size, W, textX, textY, direction) {
       const r = W * 0.40;
       const chars = [...text];
 
@@ -2629,12 +2752,12 @@
       let cx, cy, startA, tbaseline;
       if (direction === 'up') {
         // Center below text → text arcs upward (smile/rainbow shape)
-        cx = W / 2; cy = textY + r;
+        cx = textX; cy = textY + r;
         startA = -Math.PI / 2;
         tbaseline = 'bottom';
       } else {
         // Center above text → text arcs downward (frown shape)
-        cx = W / 2; cy = textY - r;
+        cx = textX; cy = textY - r;
         startA = Math.PI / 2;
         tbaseline = 'top';
       }
@@ -2657,7 +2780,7 @@
     }
 
     /* Wave text — each character oscillates on a sine wave */
-    function _drawWaveText(ctx, text, font, size, W, baseY) {
+    function _drawWaveText(ctx, text, font, size, W, textX, baseY) {
       const chars = [...text];
       ctx.font = `700 ${size}px '${font}', sans-serif`;
       ctx.textAlign = 'left';
@@ -2666,7 +2789,7 @@
       const widths = chars.map(c => ctx.measureText(c).width);
       const totalW = widths.reduce((s, w) => s + w, 0);
       const amplitude = size * 0.22;
-      let x = W / 2 - totalW / 2;
+      let x = textX - totalW / 2;
 
       for (let i = 0; i < chars.length; i++) {
         const wave = Math.sin((i / Math.max(chars.length - 1, 1)) * Math.PI * 2.2) * amplitude;
@@ -2676,7 +2799,7 @@
     }
 
     /* Size Fade text — sine arch: middle characters are largest */
-    function _drawSizeFadeText(ctx, text, font, baseSize, W, baseY) {
+    function _drawSizeFadeText(ctx, text, font, baseSize, W, textX, baseY) {
       const chars = [...text];
       const n = chars.length;
 
@@ -2694,7 +2817,7 @@
       });
 
       const totalW = widths.reduce((s, w) => s + w, 0);
-      let x = W / 2 - totalW / 2;
+      let x = textX - totalW / 2;
 
       for (let i = 0; i < n; i++) {
         ctx.font = `700 ${sizes[i]}px '${font}', sans-serif`;
@@ -2732,8 +2855,10 @@
       for (let i = 0; i < d.length; i += 4) {
         const dr = d[i] - bg[0], dg = d[i + 1] - bg[1], db = d[i + 2] - bg[2];
         const dist = Math.sqrt(dr * dr + dg * dg + db * db);
-        if (dist < 40) d[i + 3] = 0;
-        else if (dist < 80) d[i + 3] = Math.round((dist - 40) / 40 * 255);
+        // Make background removal less aggressive: smaller full-transparent cutoff
+        // and a smoother feather range to avoid removing subject pixels.
+        if (dist < 18) d[i + 3] = 0;
+        else if (dist < 64) d[i + 3] = Math.round((dist - 18) / (64 - 18) * 255);
       }
       c.putImageData(id, 0, 0);
       return off;
@@ -2753,18 +2878,43 @@
        DOWNLOAD / SHARE
     ============================================ */
     function downloadPortrait() {
-      const c = document.getElementById('output-canvas');
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = 900;
+      finalCanvas.height = 1200;
+      const fctx = finalCanvas.getContext('2d');
+
+      if (outputMapInst) {
+        outputMapInst.triggerRepaint();
+        const mapCanvas = outputMapInst.getCanvas();
+        fctx.drawImage(mapCanvas, 0, 0, 900, 1200);
+      }
+
+      const overlayCanvas = document.getElementById('output-canvas');
+      fctx.drawImage(overlayCanvas, 0, 0, 900, 1200);
+
       const a = document.createElement('a');
       a.download = `easyh-${state.city.toLowerCase().replace(/\s+/g, '-') || 'portrait'}.png`;
-      a.href = c.toDataURL('image/png');
+      a.href = finalCanvas.toDataURL('image/png');
       a.click();
     }
 
     async function sharePortrait() {
       if (navigator.share) {
         try {
-          const c = document.getElementById('output-canvas');
-          const blob = await new Promise(r => c.toBlob(r, 'image/png'));
+          const finalCanvas = document.createElement('canvas');
+          finalCanvas.width = 900;
+          finalCanvas.height = 1200;
+          const fctx = finalCanvas.getContext('2d');
+
+          if (outputMapInst) {
+            outputMapInst.triggerRepaint();
+            const mapCanvas = outputMapInst.getCanvas();
+            fctx.drawImage(mapCanvas, 0, 0, 900, 1200);
+          }
+          const overlayCanvas = document.getElementById('output-canvas');
+          fctx.drawImage(overlayCanvas, 0, 0, 900, 1200);
+
+          const blob = await new Promise(r => finalCanvas.toBlob(r, 'image/png'));
           const name = `easyh-${state.city.toLowerCase().replace(/\s+/g, '-') || 'portrait'}.png`;
           await navigator.share({
             title: `${state.city} Map Portrait`,
@@ -2782,7 +2932,47 @@
     ============================================ */
     function showGen(v) { document.getElementById('gen-overlay').classList.toggle('show', v); }
     function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+    /* ============================================
+       SCROLL REVEAL & COOKIE CONSENT
+    ============================================ */
+    function reveal() {
+      var reveals = document.querySelectorAll('.reveal');
+      for (var i = 0; i < reveals.length; i++) {
+        var windowHeight = window.innerHeight;
+        var elementTop = reveals[i].getBoundingClientRect().top;
+        var elementVisible = 100;
+        if (elementTop < windowHeight - elementVisible) {
+          reveals[i].classList.add('active');
+        }
+      }
+    }
+    window.addEventListener('scroll', reveal);
+    window.addEventListener('load', reveal);
+    // Also trigger reveal in case it doesn't fire on load initially
+    setTimeout(reveal, 100);
+
+    function acceptCookies() {
+      localStorage.setItem('easyh_cookies_accepted', 'true');
+      document.getElementById('cookie-banner').classList.remove('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (!localStorage.getItem('easyh_cookies_accepted')) {
+        setTimeout(() => {
+          document.getElementById('cookie-banner').classList.add('show');
+        }, 1200);
+      }
+    });
   </script>
+
+  <!-- Cookie Banner Element -->
+  <div id="cookie-banner" class="cookie-banner">
+    <div class="cookie-text">We use cookies to improve your experience and analyze site traffic.</div>
+    <div class="cookie-btns">
+      <button class="btn-cookie btn-cookie-outline" onclick="acceptCookies()">Decline</button>
+      <button class="btn-cookie" onclick="acceptCookies()">Accept</button>
+    </div>
+  </div>
 </body>
 
 </html>
