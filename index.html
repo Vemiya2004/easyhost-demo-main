@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
- 
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,8 +35,6 @@
     rel="stylesheet" />
   <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
-
-  <meta name="google-adsense-account" content="ca-pub-6725398818250937">	
 
   <style>
     /* ============================================
@@ -824,6 +822,10 @@
        PAGE 2 — MAP
     ============================================ */
     #page-map {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
       background: #0b1929;
     }
 
@@ -847,6 +849,7 @@
 
     #map-container {
       flex: 1;
+      min-height: 0;
       position: relative;
     }
 
@@ -909,10 +912,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      position: relative;
       padding: 0 clamp(16px, 3vw, 28px);
       background: var(--white);
       border-top: 1px solid var(--border);
       flex-shrink: 0;
+      z-index: 1000;
     }
 
     .map-hint-text {
@@ -1570,7 +1575,7 @@
       <nav class="header-nav">
         <a href="#how-it-works">How it works</a>
         <a href="#examples">Examples</a>
-        <a href="/dist/public/login.html">Login</a>
+        <a href="/login.html">Login</a>
       </nav>
     </header>
 
@@ -1860,9 +1865,9 @@
         <span class="footer-copy">© 2026 EasyH · easyh.space</span>
         <span class="footer-center">Map data © OpenStreetMap contributors</span>
         <div class="footer-links">
-          <a href="/dist/public/privacy.html">Privacy Policy</a>
-          <a href="/dist/public/terms.html">Terms of Service</a>
-          <a href="/dist/public/login.html">Login</a>
+          <a href="/privacy.html">Privacy Policy</a>
+          <a href="/terms.html">Terms of Service</a>
+          <a href="/login.html">Login</a>
         </div>
       </footer>
     </div>
