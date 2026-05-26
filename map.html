@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 2 — Adjust Map | EasyH</title>
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+  <style>
+    /* ============================================
+       RESET
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #0b1929;
+      color: #fff;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* ============================================
+       MAP PAGE
+    ============================================ */
+    #page-map {
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      background: #0b1929;
+    }
+
+    .map-bar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 clamp(16px, 3vw, 28px);
+      height: 52px;
+      background: rgba(11, 25, 41, 0.9);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .map-city-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.75);
+      letter-spacing: 0.04em;
+    }
+
+    .step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.5);
+      padding: 0;
+      transition: color 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-link:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    #map-container {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+
+    #map-el {
+      position: absolute;
+      inset: 0;
+    }
+
+    #map-preview-frame {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 75%;
+      aspect-ratio: 3/4;
+      border: 2px dashed rgba(224, 184, 80, 0.4);
+      pointer-events: none;
+      z-index: 5;
+      box-shadow: inset 0 0 40px rgba(224, 184, 80, 0.15);
+    }
+
+    .map-city-overlay {
+      position: absolute;
+      bottom: 68px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .map-city-name {
+      font-family: 'Inter';
+      font-weight: 700;
+      font-style: italic;
+      font-size: clamp(28px, 5vw, 48px);
+      color: rgba(255, 255, 255, 0.92);
+      letter-spacing: 0.05em;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.9);
+    }
+
+    .map-divider {
+      width: 60px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.3);
+      margin: 8px auto;
+    }
+
+    .map-country-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.5);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+    }
+
+    .map-bar-bottom {
+      height: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 clamp(16px, 3vw, 28px);
+      background: #ffffff;
+      border-top: 1px solid #e5e5e5;
+      flex-shrink: 0;
+      z-index: 1001;
+      pointer-events: auto;
+    }
+
+    .map-hint-text {
+      font-size: 13px;
+      color: #888;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #111111;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-sm {
+      padding: 10px 20px;
+      font-size: 13px;
+    }
+
+    .btn[disabled] {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .spin {
+      display: inline-block;
+      animation: spin 0.55s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .maplibregl-ctrl-logo,
+    .maplibregl-ctrl-attrib,
+    .maplibregl-ctrl-bottom-left,
+    .maplibregl-ctrl-bottom-right,
+    .maplibregl-ctrl-top-right {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="page-map">
+    <div class="map-bar-top">
+      <button class="btn-link" onclick="goBack()">← Back</button>
+      <span class="map-city-label" id="map-city-label">—</span>
+      <span class="step-num">Step 02 of 03</span>
+    </div>
+    <div id="map-container">
+      <div id="map-el"></div>
+      <div id="map-preview-frame"></div>
+      <div class="map-city-overlay">
+        <div class="map-city-name" id="map-city-name">—</div>
+        <div class="map-divider"></div>
+        <div class="map-country-name" id="map-country-name">—</div>
+      </div>
+    </div>
+    <div class="map-bar-bottom">
+      <span class="map-hint-text">Drag and scroll to frame your city</span>
+      <button class="btn btn-primary btn-sm" id="capture-btn" onclick="captureMap()">Add Your Photo →</button>
+    </div>
+  </div>
+
+  <script>
+    /* ============================================
+       STATE
+    ============================================ */
+    const state = {
+      city: '', country: '', lat: 0, lon: 0,
+      mapInstance: null,
+      mapZoom: 0,
+      pinLngLat: null,
+      mapMarker: null,
+    };
+
+    /* ============================================
+       MAP STYLE
+    ============================================ */
+    const darkGoldStyle = {
+      version: 8,
+      sources: {
+        openmaptiles: { type: 'vector', url: 'https://tiles.openfreemap.org/planet' }
+      },
+      layers: [
+        { id: 'bg', type: 'background', paint: { 'background-color': '#0b1929' } },
+        { id: 'water', type: 'fill', source: 'openmaptiles', 'source-layer': 'water', paint: { 'fill-color': '#081320' } },
+        { id: 'landuse', type: 'fill', source: 'openmaptiles', 'source-layer': 'landuse', paint: { 'fill-color': '#0e1f30', 'fill-opacity': 0.9 } },
+        { id: 'landcover', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', paint: { 'fill-color': '#0c1f18', 'fill-opacity': 0.7 } },
+        { id: 'building', type: 'fill', source: 'openmaptiles', 'source-layer': 'building', paint: { 'fill-color': '#122136', 'fill-opacity': 0.95 } },
+        { id: 'road-minor', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['in', 'class', 'minor', 'service'], paint: { 'line-color': '#b89050', 'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.3, 16, 1.5], 'line-opacity': 0.4 } },
+        { id: 'road-secondary', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['in', 'class', 'secondary', 'tertiary'], paint: { 'line-color': '#c8a040', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 16, 2.5], 'line-opacity': 0.7 } },
+        { id: 'road-primary', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['in', 'class', 'primary', 'trunk'], paint: { 'line-color': '#e0b850', 'line-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 16, 4.5], 'line-opacity': 0.9 } },
+        { id: 'road-motorway', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['==', 'class', 'motorway'], paint: { 'line-color': '#f5cc68', 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1.2, 16, 7], 'line-opacity': 1 } },
+        { id: 'railway', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['==', 'class', 'rail'], paint: { 'line-color': '#607080', 'line-width': 0.8, 'line-opacity': 0.35, 'line-dasharray': [4, 3] } },
+      ]
+    };
+
+    function fixMapPageHeight() {
+      const mapPage = document.getElementById('page-map');
+      if (mapPage) {
+        mapPage.style.height = `${window.innerHeight}px`;
+      }
+    }
+
+    window.addEventListener('resize', fixMapPageHeight);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(fixMapPageHeight, 100);
+    });
+
+    function goBack() {
+      window.location.href = 'location.html';
+    }
+
+    function initMap() {
+      if (!state.lat || !state.lon) return;
+      if (state.mapInstance) {
+        try { state.mapInstance.remove(); } catch (e) { }
+        state.mapInstance = null;
+      }
+      document.getElementById('map-el').innerHTML = '';
+
+      const map = new maplibregl.Map({
+        container: 'map-el',
+        style: darkGoldStyle,
+        center: [state.lon, state.lat],
+        zoom: 12,
+        attributionControl: false,
+        preserveDrawingBuffer: true,
+      });
+      state.mapInstance = map;
+
+      map.on('load', () => {
+        const el = document.createElement('div');
+        el.style.cssText = 'width:16px;height:16px;background:#e63535;border:2px solid white;border-radius:50%;box-shadow:0 0 0 4px rgba(230,53,53,0.28)';
+        const marker = new maplibregl.Marker({ element: el, draggable: true })
+          .setLngLat([state.lon, state.lat])
+          .addTo(map);
+        state.mapMarker = marker;
+      });
+    }
+
+    function captureMap() {
+      if (!state.mapInstance) {
+        window.location.href = 'photo.html';
+        return;
+      }
+      try {
+        state.mapZoom = state.mapInstance.getZoom();
+        if (state.mapMarker && typeof state.mapMarker.getLngLat === 'function') {
+          const lngLat = state.mapMarker.getLngLat();
+          state.pinLngLat = { lng: lngLat.lng, lat: lngLat.lat };
+        } else {
+          const center = state.mapInstance.getCenter();
+          state.pinLngLat = { lng: center.lng, lat: center.lat };
+        }
+      } catch (e) {
+        console.error('Map capture failed:', e);
+      }
+
+      if (state.pinLngLat) {
+        state.lat = state.pinLngLat.lat;
+        state.lon = state.pinLngLat.lng;
+      }
+
+      // Save all data and redirect to photo page
+      sessionStorage.setItem('easyh_mapZoom', state.mapZoom);
+      sessionStorage.setItem('easyh_pinLngLat', JSON.stringify(state.pinLngLat));
+      sessionStorage.setItem('easyh_lat', state.lat);
+      sessionStorage.setItem('easyh_lon', state.lon);
+
+      window.location.href = 'photo.html';
+    }
+
+    /* ============================================
+       INIT
+    ============================================ */
+    window.addEventListener('DOMContentLoaded', () => {
+      // Load data from sessionStorage
+      state.city = sessionStorage.getItem('easyh_city') || '';
+      state.country = sessionStorage.getItem('easyh_country') || '';
+      state.lat = parseFloat(sessionStorage.getItem('easyh_lat')) || 0;
+      state.lon = parseFloat(sessionStorage.getItem('easyh_lon')) || 0;
+
+      document.getElementById('map-city-label').textContent = state.city;
+      document.getElementById('map-city-name').textContent = state.city.toUpperCase();
+      document.getElementById('map-country-name').textContent = state.country.toUpperCase();
+
+      fixMapPageHeight();
+      initMap();
+    });
+  </script>
+</body>
+
+</html>

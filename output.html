@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Portrait | EasyH</title>
+  <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+  <style>
+    /* ============================================
+       RESET
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: #f7f7f5;
+      color: #111;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    /* ============================================
+       PAGE STRUCTURE
+    ============================================ */
+    #page-output {
+      min-height: 100vh;
+      background: #f7f7f5;
+    }
+
+    .output-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 48px);
+      background: rgba(255, 255, 255, 0.97);
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: #888;
+      padding: 0;
+      transition: color 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-link:hover {
+      color: #111;
+    }
+
+    .header-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111;
+    }
+
+    .output-body {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      min-height: calc(100vh - 60px);
+    }
+
+    @media (max-width: 780px) {
+      .output-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .output-canvas-col {
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: #f7f7f5;
+      overflow: auto;
+      min-height: calc(100vh - 60px);
+    }
+
+    #portrait-wrap {
+      position: relative;
+      height: calc(100vh - 200px);
+      max-height: 600px;
+      aspect-ratio: 3/4;
+      box-shadow: 0 4px 32px rgba(0, 0, 0, 0.10), 0 1px 6px rgba(0, 0, 0, 0.06);
+      background: #0b1929;
+      margin: 20px 0;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    @media (max-width: 780px) {
+      #portrait-wrap {
+        height: auto;
+        width: 85vw;
+        max-width: 400px;
+        max-height: none;
+        margin: 20px auto;
+      }
+    }
+
+    #output-map-el {
+      position: absolute;
+      inset: 0;
+    }
+
+    #output-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .output-panel {
+      padding: clamp(24px, 4vw, 40px) 32px;
+      border-left: 1px solid #e5e5e5;
+      background: #ffffff;
+    }
+
+    @media (max-width: 780px) {
+      .output-panel {
+        border-left: none;
+        border-top: 1px solid #e5e5e5;
+      }
+    }
+
+    .out-city-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .out-country {
+      font-size: 15px;
+      color: #888;
+      margin-bottom: 28px;
+    }
+
+    .out-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .out-btns .btn {
+      width: 100%;
+    }
+
+    .out-details {
+      border-top: 1px solid #e5e5e5;
+      padding-top: 24px;
+      margin-bottom: 28px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-key {
+      color: #999;
+    }
+
+    .detail-val {
+      color: #111;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    /* ============================================
+       BUTTONS
+    ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: #111111;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #111;
+      border: 1.5px solid #111;
+    }
+
+    .btn-secondary:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .maplibregl-ctrl-logo,
+    .maplibregl-ctrl-attrib,
+    .maplibregl-ctrl-bottom-left,
+    .maplibregl-ctrl-bottom-right,
+    .maplibregl-ctrl-top-right {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="page-output">
+    <div class="output-header">
+      <button class="btn-link" onclick="goBack()">← Back</button>
+      <span class="header-title">Your Portrait</span>
+      <button class="btn-link" onclick="startOver()">New City →</button>
+    </div>
+    <div class="output-body">
+      <div class="output-canvas-col">
+        <div id="portrait-wrap">
+          <div id="output-map-el" style="position:absolute; inset: 0;"></div>
+          <canvas id="output-canvas" width="900" height="1200"></canvas>
+        </div>
+      </div>
+      <div class="output-panel">
+        <div class="out-city-name" id="out-city">—</div>
+        <div class="out-country" id="out-country">—</div>
+
+        <div class="out-btns">
+          <button class="btn btn-primary" onclick="downloadPortrait()">↓ Download Portrait</button>
+          <button class="btn btn-secondary" onclick="sharePortrait()">↗ Share</button>
+        </div>
+
+        <div class="out-details">
+          <div class="detail-row"><span class="detail-key">City</span><span class="detail-val" id="d-city">—</span></div>
+          <div class="detail-row"><span class="detail-key">Country</span><span class="detail-val"
+              id="d-country">—</span></div>
+          <div class="detail-row"><span class="detail-key">Resolution</span><span class="detail-val">900 × 1200
+              px</span></div>
+          <div class="detail-row"><span class="detail-key">Style</span><span class="detail-val">Dark Gold Map</span></div>
+          <div class="detail-row"><span class="detail-key">Plan</span><span class="detail-val">Free</span></div>
+        </div>
+
+        <button class="btn-link" onclick="startOver()">← Create Another</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      city: '',
+      country: '',
+      lat: 0,
+      lon: 0,
+      mapZoom: 0,
+      pinLngLat: null,
+      photoUrl: null,
+      removeBackground: true,
+      processedPhoto: null,
+      outputMapInstance: null,
+    };
+
+    const darkGoldStyle = {
+      version: 8,
+      sources: {
+        openmaptiles: { type: 'vector', url: 'https://tiles.openfreemap.org/planet' }
+      },
+      layers: [
+        { id: 'bg', type: 'background', paint: { 'background-color': '#0b1929' } },
+        { id: 'water', type: 'fill', source: 'openmaptiles', 'source-layer': 'water', paint: { 'fill-color': '#081320' } },
+        { id: 'landuse', type: 'fill', source: 'openmaptiles', 'source-layer': 'landuse', paint: { 'fill-color': '#0e1f30', 'fill-opacity': 0.9 } },
+        { id: 'landcover', type: 'fill', source: 'openmaptiles', 'source-layer': 'landcover', paint: { 'fill-color': '#0c1f18', 'fill-opacity': 0.7 } },
+        { id: 'building', type: 'fill', source: 'openmaptiles', 'source-layer': 'building', paint: { 'fill-color': '#122136', 'fill-opacity': 0.95 } },
+        { id: 'road-minor', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['in', 'class', 'minor', 'service'], paint: { 'line-color': '#b89050', 'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.3, 16, 1.5], 'line-opacity': 0.4 } },
+        { id: 'road-secondary', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['in', 'class', 'secondary', 'tertiary'], paint: { 'line-color': '#c8a040', 'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 16, 2.5], 'line-opacity': 0.7 } },
+        { id: 'road-primary', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['in', 'class', 'primary', 'trunk'], paint: { 'line-color': '#e0b850', 'line-width': ['interpolate', ['linear'], ['zoom'], 6, 1, 16, 4.5], 'line-opacity': 0.9 } },
+        { id: 'road-motorway', type: 'line', source: 'openmaptiles', 'source-layer': 'transportation', filter: ['==', 'class', 'motorway'], paint: { 'line-color': '#f5cc68', 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1.2, 16, 7], 'line-opacity': 1 } },
+      ]
+    };
+
+    function goBack() {
+      window.location.href = 'photo.html';
+    }
+
+    function startOver() {
+      sessionStorage.clear();
+      window.location.href = 'index.html';
+    }
+
+    function initOutputMap() {
+      if (!state.pinLngLat) return;
+      if (state.outputMapInstance) {
+        try { state.outputMapInstance.remove(); } catch (e) { }
+      }
+      document.getElementById('output-map-el').innerHTML = '';
+
+      state.outputMapInstance = new maplibregl.Map({
+        container: 'output-map-el',
+        style: darkGoldStyle,
+        center: [state.pinLngLat.lng, state.pinLngLat.lat],
+        zoom: state.mapZoom || 12,
+        attributionControl: false,
+        preserveDrawingBuffer: true,
+      });
+
+      state.outputMapInstance.on('move', () => {
+        redrawOutputCanvas();
+      });
+
+      state.outputMapInstance.on('load', () => {
+        redrawOutputCanvas();
+      });
+    }
+
+    function redrawOutputCanvas() {
+      const canvas = document.getElementById('output-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = 900, H = 1200;
+
+      ctx.clearRect(0, 0, W, H);
+
+      // Vignette
+      const vig = ctx.createRadialGradient(W / 2, H * 0.42, H * 0.18, W / 2, H * 0.42, H * 0.82);
+      vig.addColorStop(0, 'rgba(0,0,0,0)');
+      vig.addColorStop(0.65, 'rgba(0,0,0,0)');
+      vig.addColorStop(1, 'rgba(0,0,0,0.55)');
+      ctx.fillStyle = vig;
+      ctx.fillRect(0, 0, W, H);
+
+      // Bottom gradient
+      const btm = ctx.createLinearGradient(0, H * 0.73, 0, H);
+      btm.addColorStop(0, 'rgba(0,0,0,0)');
+      btm.addColorStop(0.45, 'rgba(0,0,0,0.72)');
+      btm.addColorStop(1, 'rgba(0,0,0,0.95)');
+      ctx.fillStyle = btm;
+      ctx.fillRect(0, 0, W, H);
+
+      // Top overlay
+      const topOvl = ctx.createLinearGradient(0, 0, 0, H * 0.38);
+      topOvl.addColorStop(0, 'rgba(0,0,0,0.45)');
+      topOvl.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = topOvl;
+      ctx.fillRect(0, 0, W, H * 0.38);
+
+      // Photo
+      if (state.processedPhoto) {
+        const { img, x, y, w, h } = state.processedPhoto;
+        ctx.save();
+        ctx.shadowColor = 'rgba(0,0,0,0.55)';
+        ctx.shadowBlur = 40;
+        ctx.shadowOffsetY = 20;
+        ctx.drawImage(img, x, y, w, h);
+        ctx.restore();
+      }
+
+      // Bottom text
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.60)';
+      ctx.font = `400 ${W * 0.028}px 'DM Mono', monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(state.country.toUpperCase(), W / 2, H * 0.875);
+      ctx.restore();
+
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,255,255,0.30)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(W / 2 - 60, H * 0.891);
+      ctx.lineTo(W / 2 + 60, H * 0.891);
+      ctx.stroke();
+      ctx.restore();
+
+      // Watermark
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.13)';
+      ctx.font = `400 ${W * 0.016}px Inter, sans-serif`;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('easyh.space', W - 18, H - 18);
+      ctx.restore();
+    }
+
+    function downloadPortrait() {
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = 900;
+      finalCanvas.height = 1200;
+      const fctx = finalCanvas.getContext('2d');
+
+      if (state.outputMapInstance) {
+        state.outputMapInstance.triggerRepaint();
+        const mapCanvas = state.outputMapInstance.getCanvas();
+        fctx.drawImage(mapCanvas, 0, 0, 900, 1200);
+      }
+
+      const overlayCanvas = document.getElementById('output-canvas');
+      fctx.drawImage(overlayCanvas, 0, 0, 900, 1200);
+
+      const a = document.createElement('a');
+      a.download = `easyh-${state.city.toLowerCase().replace(/\s+/g, '-') || 'portrait'}.png`;
+      a.href = finalCanvas.toDataURL('image/png');
+      a.click();
+    }
+
+    async function sharePortrait() {
+      if (navigator.share) {
+        try {
+          const finalCanvas = document.createElement('canvas');
+          finalCanvas.width = 900;
+          finalCanvas.height = 1200;
+          const fctx = finalCanvas.getContext('2d');
+
+          if (state.outputMapInstance) {
+            state.outputMapInstance.triggerRepaint();
+            const mapCanvas = state.outputMapInstance.getCanvas();
+            fctx.drawImage(mapCanvas, 0, 0, 900, 1200);
+          }
+          const overlayCanvas = document.getElementById('output-canvas');
+          fctx.drawImage(overlayCanvas, 0, 0, 900, 1200);
+
+          const blob = await new Promise(r => finalCanvas.toBlob(r, 'image/png'));
+          const name = `easyh-${state.city.toLowerCase().replace(/\s+/g, '-') || 'portrait'}.png`;
+          await navigator.share({
+            title: `${state.city} Map Portrait`,
+            text: `My map portrait of ${state.city} — made with easyh.space`,
+            files: [new File([blob], name, { type: 'image/png' })],
+          });
+          return;
+        } catch { }
+      }
+      downloadPortrait();
+    }
+
+    function loadImg(src) {
+      return new Promise((resolve, reject) => {
+        const i = new Image();
+        i.crossOrigin = 'anonymous';
+        i.onload = () => resolve(i);
+        i.onerror = reject;
+        i.src = src;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Load data from sessionStorage
+      state.city = sessionStorage.getItem('easyh_city') || '';
+      state.country = sessionStorage.getItem('easyh_country') || '';
+      state.lat = parseFloat(sessionStorage.getItem('easyh_lat')) || 0;
+      state.lon = parseFloat(sessionStorage.getItem('easyh_lon')) || 0;
+      state.mapZoom = parseFloat(sessionStorage.getItem('easyh_mapZoom')) || 0;
+      state.pinLngLat = JSON.parse(sessionStorage.getItem('easyh_pinLngLat') || '{}');
+      state.photoUrl = sessionStorage.getItem('easyh_photoUrl') || null;
+      state.removeBackground = sessionStorage.getItem('easyh_removeBackground') === 'true';
+
+      document.getElementById('out-city').textContent = state.city;
+      document.getElementById('out-country').textContent = state.country;
+      document.getElementById('d-city').textContent = state.city;
+      document.getElementById('d-country').textContent = state.country;
+
+      // Process photo if provided
+      if (state.photoUrl) {
+        try {
+          const img = await loadImg(state.photoUrl);
+          const photoH = 1200 * 0.58;
+          const photoW = (img.naturalWidth / img.naturalHeight) * photoH;
+          const px = (900 - photoW) / 2;
+          const py = 1200 - photoH;
+
+          state.processedPhoto = {
+            img: img,
+            x: px, y: py, w: photoW, h: photoH
+          };
+        } catch (e) {
+          console.error('Photo load failed:', e);
+        }
+      }
+
+      initOutputMap();
+      redrawOutputCanvas();
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 3 — Add Your Photo | EasyH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ============================================
+       TOKENS
+    ============================================ */
+    :root {
+      --white: #ffffff;
+      --bg: #f7f7f5;
+      --black: #111111;
+      --text: #111111;
+      --muted: #555555;
+      --dim: #888888;
+      --faint: #bbbbbb;
+      --border: #e5e5e5;
+      --error: #cc3333;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'DM Mono', 'Courier New', monospace;
+      --ease: 0.25s ease;
+    }
+
+    /* ============================================
+       RESET
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    input {
+      font-family: inherit;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================
+       HEADER
+    ============================================ */
+    .step-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 clamp(20px, 5vw, 48px);
+      height: 60px;
+      background: rgba(255, 255, 255, 0.97);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(4px);
+    }
+
+    .step-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--faint);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dim);
+      padding: 0;
+      transition: color var(--ease);
+      cursor: pointer;
+    }
+
+    .btn-link:hover {
+      color: var(--black);
+    }
+
+    /* ============================================
+       PHOTO PAGE
+    ============================================ */
+    #page-photo {
+      min-height: 100vh;
+      background: var(--white);
+    }
+
+    .photo-body {
+      max-width: 640px;
+      padding: clamp(48px, 7vw, 72px) clamp(20px, 7vw, 80px);
+    }
+
+    .photo-heading {
+      margin-bottom: 10px;
+    }
+
+    .photo-heading .bold {
+      font-size: clamp(36px, 6vw, 52px);
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .photo-heading .light {
+      font-size: clamp(36px, 6vw, 52px);
+      font-weight: 400;
+      color: #666;
+    }
+
+    .photo-sub {
+      font-size: 15px;
+      color: #888;
+      margin-bottom: 32px;
+    }
+
+    .drop-zone {
+      border: 1.5px dashed #ccc;
+      border-radius: 4px;
+      padding: 60px 32px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all var(--ease);
+      background: var(--white);
+      margin-bottom: 24px;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.drag-over {
+      border-color: var(--black);
+      background: var(--bg);
+    }
+
+    .drop-zone input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .drop-icon {
+      color: #ccc;
+      margin-bottom: 14px;
+    }
+
+    .drop-icon svg {
+      width: 48px;
+      height: 48px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .drop-main {
+      font-size: 16px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .drop-sub-text {
+      font-size: 14px;
+      color: #aaa;
+    }
+
+    .photo-preview {
+      display: none;
+      margin-bottom: 20px;
+    }
+
+    .photo-preview.show {
+      display: block;
+    }
+
+    .photo-thumb {
+      max-height: 160px;
+      width: auto;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .remove-photo {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--dim);
+      cursor: pointer;
+      transition: color var(--ease);
+      background: none;
+      border: none;
+    }
+
+    .remove-photo:hover {
+      color: var(--error);
+    }
+
+    .mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 480px) {
+      .mode-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      border: 1px solid var(--border);
+      border-radius: 2px;
+      padding: 22px 18px;
+      cursor: pointer;
+      position: relative;
+      transition: all var(--ease);
+      background: var(--white);
+    }
+
+    .mode-card:hover {
+      border-color: #bbb;
+    }
+
+    .mode-card.sel {
+      border: 2px solid var(--black);
+    }
+
+    .mode-rec {
+      font-family: var(--mono);
+      font-size: 9px;
+      background: var(--black);
+      color: var(--white);
+      padding: 2px 7px;
+      display: inline-block;
+      letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+
+    .mode-rec-spacer {
+      height: 22px;
+    }
+
+    .mode-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    .mode-desc {
+      font-size: 13px;
+      color: #888;
+      line-height: 1.5;
+    }
+
+    .tip-box {
+      font-size: 13px;
+      color: #666;
+      background: #f9f9f9;
+      padding: 12px;
+      border-radius: 6px;
+      border: 1px solid #eee;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+
+    .tip-box a {
+      color: #000;
+      text-decoration: underline;
+    }
+
+    /* ============================================
+       BUTTONS
+    ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      transition: all var(--ease);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--black);
+      border: 1.5px solid var(--black);
+    }
+
+    .btn-secondary:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-sm {
+      padding: 10px 20px;
+      font-size: 13px;
+    }
+
+    .btn[disabled] {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .spin {
+      display: inline-block;
+      animation: spin 0.55s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #gen-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.96);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 500;
+    }
+
+    #gen-overlay.show {
+      display: flex;
+    }
+
+    .gen-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--black);
+    }
+
+    .gen-bar-track {
+      width: 180px;
+      height: 2px;
+      background: var(--border);
+      overflow: hidden;
+    }
+
+    .gen-bar {
+      height: 100%;
+      background: var(--black);
+      animation: slide 1.2s ease-in-out infinite;
+    }
+
+    @keyframes slide {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(200%);
+      }
+    }
+
+    .gen-sub {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="page-photo">
+    <div class="step-header">
+      <button class="btn-link" onclick="goBack()">← Back</button>
+      <span class="step-num">Step 03 of 03</span>
+    </div>
+    <div class="photo-body">
+      <div class="photo-heading">
+        <span class="bold">Add yourself</span>
+        <span class="light"> to the map</span>
+      </div>
+      <p class="photo-sub">Upload a photo of yourself. Works best with a clear, front-facing photo.</p>
+
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="photo-input" accept="image/*" onchange="onFileSelect(event)" />
+        <div class="drop-icon">
+          <svg viewBox="0 0 24 24">
+            <path d="M12 16V4m0 12l-4-4m4 4l4-4" />
+            <line x1="20" y1="20" x2="4" y2="20" />
+          </svg>
+        </div>
+        <p class="drop-main">Drop your photo here</p>
+        <p class="drop-sub-text">or click to browse files</p>
+      </div>
+
+      <div class="photo-preview" id="photo-preview">
+        <img id="photo-thumb" class="photo-thumb" alt="Preview" />
+        <button class="remove-photo" onclick="removePhoto()">✕ Remove</button>
+      </div>
+
+      <div class="mode-cards">
+        <div class="mode-card" id="card-keepbg" onclick="selectMode('keep')">
+          <div class="mode-rec-spacer"></div>
+          <div class="mode-title">With Background</div>
+          <p class="mode-desc">Your photo placed as-is on the map</p>
+        </div>
+        <div class="mode-card sel" id="card-removebg" onclick="selectMode('remove')">
+          <span class="mode-rec">RECOMMENDED</span>
+          <div class="mode-title">Remove Background</div>
+          <p class="mode-desc">Your cutout floats cleanly over the map</p>
+        </div>
+      </div>
+
+      <div class="tip-box">
+        💡 <strong>Tip:</strong> If the background isn't removed cleanly, you can use <a href="https://www.remove.bg"
+          target="_blank">remove.bg</a> to remove it first. Then upload that new image here and select <strong>"With
+          Background"</strong>
+      </div>
+
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="generatePortrait()" id="gen-btn">Generate Portrait →</button>
+        <button class="btn btn-secondary btn-sm" onclick="skipPhoto()">Skip Photo</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="gen-overlay">
+    <div class="gen-title">Generating your portrait…</div>
+    <div class="gen-bar-track">
+      <div class="gen-bar"></div>
+    </div>
+    <div class="gen-sub">Compositing your image</div>
+  </div>
+
+  <script>
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? ''
+      : 'https://easyhost-backend.onrender.com';
+
+    const state = {
+      photoFile: null,
+      photoUrl: null,
+      removeBackground: true,
+      city: '',
+      country: '',
+      lat: 0,
+      lon: 0,
+      mapZoom: 0,
+      pinLngLat: null,
+    };
+
+    const dropZone = document.getElementById('drop-zone');
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault(); dropZone.classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f && f.type.startsWith('image/')) loadPhotoFile(f);
+    });
+
+    function goBack() {
+      window.location.href = 'map.html';
+    }
+
+    function onFileSelect(e) {
+      const f = e.target.files[0];
+      if (f) loadPhotoFile(f);
+    }
+
+    function loadPhotoFile(f) {
+      state.photoFile = f;
+      state.photoUrl = URL.createObjectURL(f);
+      document.getElementById('photo-thumb').src = state.photoUrl;
+      document.getElementById('photo-preview').classList.add('show');
+    }
+
+    function removePhoto() {
+      state.photoFile = null;
+      state.photoUrl = null;
+      document.getElementById('photo-preview').classList.remove('show');
+      document.getElementById('photo-thumb').src = '';
+      document.getElementById('photo-input').value = '';
+    }
+
+    function selectMode(mode) {
+      state.removeBackground = mode === 'remove';
+      document.getElementById('card-keepbg').classList.toggle('sel', mode === 'keep');
+      document.getElementById('card-removebg').classList.toggle('sel', mode === 'remove');
+    }
+
+    function skipPhoto() {
+      state.photoUrl = null;
+      generatePortrait();
+    }
+
+    function showGen(v) {
+      document.getElementById('gen-overlay').classList.toggle('show', v);
+    }
+
+    function delay(ms) {
+      return new Promise(r => setTimeout(r, ms));
+    }
+
+    async function generatePortrait() {
+      showGen(true);
+      await delay(50);
+
+      try {
+        // Load data from sessionStorage
+        state.city = sessionStorage.getItem('easyh_city') || '';
+        state.country = sessionStorage.getItem('easyh_country') || '';
+        state.lat = parseFloat(sessionStorage.getItem('easyh_lat')) || 0;
+        state.lon = parseFloat(sessionStorage.getItem('easyh_lon')) || 0;
+        state.mapZoom = parseFloat(sessionStorage.getItem('easyh_mapZoom')) || 0;
+        state.pinLngLat = JSON.parse(sessionStorage.getItem('easyh_pinLngLat') || '{}');
+
+        // Log generation
+        if (state.city && state.country) {
+          fetch(`${API_BASE}/api/generate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              city: state.city,
+              country: state.country,
+              lat: state.lat,
+              lon: state.lon
+            }),
+          }).then(r => r.json()).catch(() => { });
+        }
+
+        // Save all data and redirect to output page
+        sessionStorage.setItem('easyh_photoUrl', state.photoUrl || '');
+        sessionStorage.setItem('easyh_removeBackground', state.removeBackground);
+
+        await delay(500);
+        showGen(false);
+        window.location.href = 'output.html';
+      } catch (e) {
+        console.error(e);
+        showGen(false);
+      }
+    }
+
+    // Default: remove bg is selected
+    document.getElementById('card-removebg').classList.add('sel');
+  </script>
+</body>
+
+</html>

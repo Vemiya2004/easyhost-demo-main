@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Step 1 — Choose Your City | EasyH</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ============================================
+       TOKENS
+    ============================================ */
+    :root {
+      --white: #ffffff;
+      --bg: #f7f7f5;
+      --black: #111111;
+      --text: #111111;
+      --muted: #555555;
+      --dim: #888888;
+      --faint: #bbbbbb;
+      --border: #e5e5e5;
+      --border2: #dddddd;
+      --error: #cc3333;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'DM Mono', 'Courier New', monospace;
+      --ease: 0.25s ease;
+    }
+
+    /* ============================================
+       RESET
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    input {
+      font-family: inherit;
+    }
+
+    /* ============================================
+       PAGE STRUCTURE
+    ============================================ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================
+       HEADER
+    ============================================ */
+    .step-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 clamp(20px, 5vw, 48px);
+      height: 60px;
+      background: rgba(255, 255, 255, 0.97);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(4px);
+    }
+
+    .step-num {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--faint);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dim);
+      padding: 0;
+      transition: color var(--ease);
+      cursor: pointer;
+    }
+
+    .btn-link:hover {
+      color: var(--black);
+    }
+
+    /* ============================================
+       LOCATION PAGE
+    ============================================ */
+    #page-location {
+      min-height: 100vh;
+      background: var(--white);
+    }
+
+    .location-body {
+      max-width: 640px;
+      padding: clamp(48px, 7vw, 80px) clamp(20px, 7vw, 80px);
+    }
+
+    .location-label {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--faint);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .location-heading {
+      font-size: clamp(36px, 6vw, 52px);
+      line-height: 1.1;
+      margin-bottom: 10px;
+    }
+
+    .location-heading .normal {
+      font-weight: 400;
+      color: #333;
+    }
+
+    .location-heading .bold {
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    .location-subtext {
+      font-size: 16px;
+      color: #888;
+      margin-bottom: 36px;
+    }
+
+    .loc-input-wrap {
+      border-bottom: 2px solid var(--black);
+      margin-bottom: 20px;
+      transition: border-color var(--ease);
+    }
+
+    .loc-input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: var(--font);
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 500;
+      color: var(--black);
+      padding: 12px 0;
+    }
+
+    .loc-input::placeholder {
+      color: #ccc;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .chip {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 6px 14px;
+      border-radius: 4px;
+      background: transparent;
+      cursor: pointer;
+      transition: all var(--ease);
+      border: none;
+    }
+
+    .chip:hover {
+      border-color: var(--black);
+      color: var(--black);
+      background: var(--bg);
+    }
+
+    .loc-error {
+      font-size: 13px;
+      color: var(--error);
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    .loc-error.show {
+      display: block;
+    }
+
+    /* ============================================
+       BUTTONS
+    ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      transition: all var(--ease);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn[disabled] {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .spin {
+      display: inline-block;
+      animation: spin 0.55s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="page-location">
+    <div class="step-header">
+      <button class="btn-link" onclick="goBack()">← Back</button>
+      <span class="step-num">Step 01 of 03</span>
+    </div>
+    <div class="location-body">
+      <p class="location-label">Step 01 — Location</p>
+      <div class="location-heading">
+        <span class="normal">Where do you want</span><br>
+        <span class="bold">your map?</span>
+      </div>
+      <p class="location-subtext">Type any city, town, or place in the world.</p>
+
+      <div class="loc-input-wrap">
+        <input id="city-input" class="loc-input" type="text" placeholder="e.g. Colombo, Sri Lanka" autocomplete="off"
+          spellcheck="false" onkeydown="if(event.key==='Enter') doGeocode()" />
+      </div>
+
+      <div class="chips">
+        <button class="chip" onclick="setCity('Colombo')">Colombo</button>
+        <button class="chip" onclick="setCity('Tokyo')">Tokyo</button>
+        <button class="chip" onclick="setCity('London')">London</button>
+        <button class="chip" onclick="setCity('New York')">New York</button>
+        <button class="chip" onclick="setCity('Paris')">Paris</button>
+        <button class="chip" onclick="setCity('Dubai')">Dubai</button>
+        <button class="chip" onclick="setCity('Sydney')">Sydney</button>
+        <button class="chip" onclick="setCity('Barcelona')">Barcelona</button>
+        <button class="chip" onclick="setCity('Mumbai')">Mumbai</button>
+        <button class="chip" onclick="setCity('Bangkok')">Bangkok</button>
+      </div>
+
+      <p class="loc-error" id="loc-error">Location not found. Please try a different name.</p>
+      <button class="btn btn-primary" id="loc-btn" onclick="doGeocode()" style="max-width:280px;">Find on Map →</button>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? ''
+      : 'https://easyhost-backend.onrender.com';
+
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+
+    function setCity(name) {
+      document.getElementById('city-input').value = name;
+      document.getElementById('city-input').focus();
+    }
+
+    async function doGeocode() {
+      const q = document.getElementById('city-input').value.trim();
+      if (!q) return;
+
+      const btn = document.getElementById('loc-btn');
+      const err = document.getElementById('loc-error');
+      err.classList.remove('show');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spin">⟳</span> Locating…';
+
+      try {
+        const r = await fetch(`${API_BASE}/api/geocode`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ q }),
+        });
+        const d = await r.json();
+        if (!r.ok) throw new Error(d.error || 'Not found');
+
+        // Store the location data and redirect to map page
+        sessionStorage.setItem('easyh_city', d.city);
+        sessionStorage.setItem('easyh_country', d.country);
+        sessionStorage.setItem('easyh_lat', d.lat);
+        sessionStorage.setItem('easyh_lon', d.lon);
+
+        window.location.href = 'map.html';
+      } catch (e) {
+        err.classList.add('show');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Find on Map →';
+      }
+    }
+  </script>
+</body>
+
+</html>
