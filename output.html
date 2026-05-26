@@ -7,6 +7,8 @@
   <title>Your Portrait | EasyH</title>
   <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+  <!-- Load Google Fonts used for city previews and final render -->
+  <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;700&family=Playfair+Display:wght@400;700&family=Bebas+Neue&family=Oswald:wght@400;700&family=Montserrat:wght@400;700&family=Pacifico&family=Abril+Fatface&family=Dancing+Script&family=Lobster&family=Righteous&family=Cinzel&family=Raleway:wght@400;700" rel="stylesheet">
 
   <style>
     /* ============================================
@@ -480,7 +482,7 @@
     }
 
     function initOutputMap() {
-      if (!state.pinLngLat) return;
+      if (!state.pinLngLat || typeof state.pinLngLat.lng !== 'number' || typeof state.pinLngLat.lat !== 'number') return;
       if (state.outputMapInstance) {
         try { state.outputMapInstance.remove(); } catch (e) { }
       }
@@ -946,6 +948,8 @@
       state.pinLngLat = JSON.parse(sessionStorage.getItem('easyh_pinLngLat') || '{}');
       state.photoUrl = sessionStorage.getItem('easyh_photoUrl') || null;
       state.removeBackground = sessionStorage.getItem('easyh_removeBackground') === 'true';
+
+      console.log('easyh state:', { city: state.city, pinLngLat: state.pinLngLat, photoUrl: state.photoUrl, mapZoom: state.mapZoom });
 
       document.getElementById('out-city').textContent = state.city;
       document.getElementById('out-country').textContent = state.country;
