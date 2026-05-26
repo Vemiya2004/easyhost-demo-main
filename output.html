@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Your Portrait | EasyH</title>
   <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
-  <link rel="icon" type="image/png" href="public/assets/favicon.png" />
   <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
   <!-- Load Google Fonts used for city previews and final render -->
   <link href="https://fonts.googleapis.com/css2?display=swap&family=Inter:wght@400;700&family=Playfair+Display:wght@400;700&family=Bebas+Neue&family=Oswald:wght@400;700&family=Montserrat:wght@400;700&family=Pacifico&family=Abril+Fatface&family=Dancing+Script&family=Lobster&family=Righteous&family=Cinzel&family=Raleway:wght@400;700" rel="stylesheet">
@@ -946,7 +945,7 @@
       state.lat = parseFloat(sessionStorage.getItem('easyh_lat')) || 0;
       state.lon = parseFloat(sessionStorage.getItem('easyh_lon')) || 0;
       state.mapZoom = parseFloat(sessionStorage.getItem('easyh_mapZoom')) || 0;
-      state.pinLngLat = JSON.parse(sessionStorage.getItem('easyh_pinLngLat') || '{}');
+      state.pinLngLat = JSON.parse(sessionStorage.getItem('easyh_pinLngLat') || 'null');
       state.photoUrl = sessionStorage.getItem('easyh_photoUrl') || null;
       state.removeBackground = sessionStorage.getItem('easyh_removeBackground') === 'true';
 
@@ -956,6 +955,9 @@
       document.getElementById('out-country').textContent = state.country;
       document.getElementById('d-city').textContent = state.city;
       document.getElementById('d-country').textContent = state.country;
+
+      // Populate font/style pickers
+      try { renderFontPicker(); renderStylePicker(); } catch (e) { /* ignore */ }
 
       // Process photo if provided
       if (state.photoUrl) {
