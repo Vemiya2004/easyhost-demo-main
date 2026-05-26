@@ -237,6 +237,125 @@
       color: #fff;
     }
 
+    .portrait-toolbar {
+      margin-top: 14px;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      padding: 14px 16px;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .toolbar-section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toolbar-label {
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #555;
+    }
+
+    .picker-row {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+      scrollbar-color: #ddd transparent;
+    }
+
+    .picker-row::-webkit-scrollbar {
+      height: 3px;
+    }
+
+    .picker-row::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .picker-row::-webkit-scrollbar-thumb {
+      background: #ddd;
+    }
+
+    .font-card {
+      flex-shrink: 0;
+      width: 140px;
+      height: 62px;
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 8px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 3px;
+      overflow: hidden;
+      transition: border-color 0.12s;
+    }
+
+    .font-card:hover {
+      border-color: #111;
+    }
+
+    .font-card.active {
+      border: 2px solid #111;
+    }
+
+    .font-card-text {
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      color: #111;
+    }
+
+    .font-card-name {
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      color: #888;
+    }
+
+    .style-card {
+      flex-shrink: 0;
+      width: 120px;
+      border: 1px solid #ddd;
+      background: #fff;
+      padding: 7px 7px 6px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      overflow: hidden;
+      transition: border-color 0.12s;
+    }
+
+    .style-card:hover {
+      border-color: #111;
+    }
+
+    .style-card.active {
+      border: 2px solid #111;
+    }
+
+    .style-card canvas {
+      display: block;
+    }
+
+    .style-card-name {
+      font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      color: #888;
+      white-space: nowrap;
+    }
+
     .maplibregl-ctrl-logo,
     .maplibregl-ctrl-attrib,
     .maplibregl-ctrl-bottom-left,
@@ -259,6 +378,16 @@
         <div id="portrait-wrap">
           <div id="output-map-el" style="position:absolute; inset: 0;"></div>
           <canvas id="output-canvas" width="900" height="1200"></canvas>
+        </div>
+        <div class="portrait-toolbar">
+          <div class="toolbar-section">
+            <span class="toolbar-label">Font</span>
+            <div class="picker-row" id="font-picker-row"></div>
+          </div>
+          <div class="toolbar-section">
+            <span class="toolbar-label">Style</span>
+            <div class="picker-row" id="style-picker-row"></div>
+          </div>
         </div>
       </div>
       <div class="output-panel">
@@ -297,7 +426,31 @@
       removeBackground: true,
       processedPhoto: null,
       outputMapInstance: null,
+      cityFont: 'Inter',
+      cityTextStyle: 'normal',
     };
+
+    const CITY_FONTS = [
+      { value: 'Inter', label: 'Inter' },
+      { value: 'Playfair Display', label: 'Playfair Display' },
+      { value: 'Bebas Neue', label: 'Bebas Neue' },
+      { value: 'Oswald', label: 'Oswald' },
+      { value: 'Montserrat', label: 'Montserrat' },
+      { value: 'Pacifico', label: 'Pacifico' },
+      { value: 'Abril Fatface', label: 'Abril Fatface' },
+      { value: 'Dancing Script', label: 'Dancing Script' },
+      { value: 'Lobster', label: 'Lobster' },
+      { value: 'Righteous', label: 'Righteous' },
+      { value: 'Cinzel', label: 'Cinzel' },
+      { value: 'Raleway', label: 'Raleway' },
+    ];
+    const CITY_STYLES = [
+      { value: 'normal', label: 'Normal' },
+      { value: 'arc-up', label: 'Arc Up' },
+      { value: 'arc-down', label: 'Arc Down' },
+      { value: 'wave', label: 'Wave' },
+      { value: 'size-fade', label: 'Size Fade' },
+    ];
 
     const darkGoldStyle = {
       version: 8,
@@ -386,12 +539,48 @@
       if (state.processedPhoto) {
         const { img, x, y, w, h } = state.processedPhoto;
         ctx.save();
-        ctx.shadowColor = 'rgba(0,0,0,0.55)';
-        ctx.shadowBlur = 40;
-        ctx.shadowOffsetY = 20;
+        ctx.shadowColor = !state.removeBackground ? 'rgba(0,0,0,0.6)' : 'rgba(0,0,0,0.55)';
+        ctx.shadowBlur = !state.removeBackground ? 48 : 40;
+        ctx.shadowOffsetY = !state.removeBackground ? 24 : 20;
         ctx.drawImage(img, x, y, w, h);
         ctx.restore();
       }
+
+      // Pin
+      let pinX = W / 2;
+      let pinY = H / 2;
+      if (state.outputMapInstance && state.pinLngLat) {
+        const p = state.outputMapInstance.project([state.pinLngLat.lng, state.pinLngLat.lat]);
+        const mapCanvas = state.outputMapInstance.getContainer();
+        const rect = mapCanvas.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          pinX = (p.x / rect.width) * W;
+          pinY = (p.y / rect.height) * H;
+        }
+      }
+
+      // If pin overlaps photo, push it outside
+      if (state.processedPhoto) {
+        const { x: px, y: py, w: photoW, h: photoH } = state.processedPhoto;
+        const inside = pinX >= px && pinX <= px + photoW && pinY >= py && pinY <= py + photoH;
+        if (inside) {
+          const topDist = pinY - py;
+          const bottomDist = py + photoH - pinY;
+          const leftDist = pinX - px;
+          const rightDist = px + photoW - pinX;
+          const minDist = Math.min(topDist, bottomDist, leftDist, rightDist);
+          const margin = 36;
+          if (minDist === topDist) pinY = Math.max(24, py - margin);
+          else if (minDist === bottomDist) pinY = Math.min(H - 24, py + photoH + margin);
+          else if (minDist === leftDist) pinX = Math.max(24, px - margin);
+          else pinX = Math.min(W - 24, px + photoW + margin);
+        }
+      }
+
+      drawPin(ctx, pinX, pinY, 16);
+
+      // City text
+      drawCityText(ctx, state.city, W, H, pinX, pinY);
 
       // Bottom text
       ctx.save();
@@ -418,6 +607,273 @@
       ctx.textBaseline = 'bottom';
       ctx.fillText('easyh.space', W - 18, H - 18);
       ctx.restore();
+    }
+
+    function drawPin(ctx, cx, cy, r) {
+      ctx.save();
+      // Pin head — filled circle
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.fillStyle = '#e63535';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      // Inner white dot
+      ctx.beginPath();
+      ctx.arc(cx, cy - r * 0.28, r * 0.32, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.75)';
+      ctx.fill();
+
+      // Pin tail — teardrop pointing down
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.55, cy + r * 0.65);
+      ctx.quadraticCurveTo(cx, cy + r * 2.6, cx, cy + r * 2.6);
+      ctx.quadraticCurveTo(cx, cy + r * 2.6, cx + r * 0.55, cy + r * 0.65);
+      ctx.fillStyle = '#e63535';
+      ctx.fill();
+
+      // Outer glow ring
+      ctx.beginPath();
+      ctx.arc(cx, cy, r + 6, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(230,53,53,0.30)';
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function drawCityText(ctx, text, W, H, pinX, pinY) {
+      if (!text) return;
+      const font = state.cityFont || 'Inter';
+      const style = state.cityTextStyle || 'normal';
+      const baseSize = W * 0.088;
+      const textY = pinY != null ? Math.min(pinY + baseSize + 20, H - 20) : H * 0.270;
+      const textX = pinX != null ? pinX : W / 2;
+
+      ctx.save();
+      ctx.fillStyle = 'rgba(255,255,255,0.95)';
+      ctx.shadowColor = 'rgba(0,0,0,0.75)';
+      ctx.shadowBlur = 20;
+
+      switch (style) {
+        case 'arc-up':
+          _drawArcText(ctx, text, font, baseSize, W, textX, textY, 'up');
+          break;
+        case 'arc-down':
+          _drawArcText(ctx, text, font, baseSize, W, textX, textY, 'down');
+          break;
+        case 'wave':
+          _drawWaveText(ctx, text, font, baseSize, W, textX, textY);
+          break;
+        case 'size-fade':
+          _drawSizeFadeText(ctx, text, font, baseSize, W, textX, textY);
+          break;
+        default: // 'normal'
+          ctx.font = `700 ${baseSize}px '${font}', sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'alphabetic';
+          ctx.fillText(text, textX, textY);
+          break;
+      }
+
+      ctx.restore();
+    }
+
+    function _drawArcText(ctx, text, font, size, W, textX, textY, direction) {
+      const r = W * 0.40;
+      const chars = [...text];
+      ctx.font = `700 ${size}px '${font}', sans-serif`;
+      let cx, cy, startA, tbaseline;
+      if (direction === 'up') {
+        cx = textX; cy = textY + r;
+        startA = -Math.PI / 2;
+        tbaseline = 'bottom';
+      } else {
+        cx = textX; cy = textY - r;
+        startA = Math.PI / 2;
+        tbaseline = 'top';
+      }
+      ctx.textBaseline = tbaseline;
+      const totalW = chars.reduce((s, c) => s + ctx.measureText(c).width, 0);
+      const totalAngle = totalW / r;
+      let a = startA - totalAngle / 2;
+
+      for (const ch of chars) {
+        const cw = ctx.measureText(ch).width;
+        a += (cw / 2) / r;
+        ctx.save();
+        ctx.translate(cx + r * Math.cos(a), cy + r * Math.sin(a));
+        ctx.rotate(a + Math.PI / 2);
+        ctx.fillText(ch, 0, 0);
+        ctx.restore();
+        a += (cw / 2) / r;
+      }
+    }
+
+    function _drawWaveText(ctx, text, font, size, W, textX, baseY) {
+      const chars = [...text];
+      ctx.font = `700 ${size}px '${font}', sans-serif`;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      const widths = chars.map(c => ctx.measureText(c).width);
+      const totalW = widths.reduce((s, w) => s + w, 0);
+      const amplitude = size * 0.22;
+      let x = textX - totalW / 2;
+
+      for (let i = 0; i < chars.length; i++) {
+        const wave = Math.sin((i / Math.max(chars.length - 1, 1)) * Math.PI * 2.2) * amplitude;
+        ctx.fillText(chars[i], x, baseY + wave);
+        x += widths[i];
+      }
+    }
+
+    function _drawSizeFadeText(ctx, text, font, baseSize, W, textX, baseY) {
+      const chars = [...text];
+      const n = chars.length;
+      const sizes = chars.map((_, i) => {
+        const t = n > 1 ? i / (n - 1) : 0.5;
+        const s = Math.sin(t * Math.PI);
+        return baseSize * (0.52 + s * 0.48);
+      });
+
+      const widths = chars.map((ch, i) => {
+        ctx.font = `700 ${sizes[i]}px '${font}', sans-serif`;
+        return ctx.measureText(ch).width;
+      });
+
+      const totalW = widths.reduce((s, w) => s + w, 0);
+      let x = textX - totalW / 2;
+
+      for (let i = 0; i < n; i++) {
+        ctx.font = `700 ${sizes[i]}px '${font}', sans-serif`;
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+        const yShift = -(sizes[i] - baseSize * 0.52) * 0.28;
+        ctx.fillText(chars[i], x, baseY + yShift);
+        x += widths[i];
+      }
+    }
+
+    function updateCityFont(font) {
+      state.cityFont = font;
+      renderFontPicker();
+      renderStylePicker();
+      redrawOutputCanvas();
+    }
+
+    function updateCityStyle(style) {
+      state.cityTextStyle = style;
+      renderStylePicker();
+      renderFontPicker();
+      redrawOutputCanvas();
+    }
+
+    function renderFontPicker() {
+      const row = document.getElementById('font-picker-row');
+      if (!row) return;
+      const preview = state.city || 'City';
+      row.innerHTML = CITY_FONTS.map(f => `
+    <div class="font-card${state.cityFont === f.value ? ' active' : ''}"
+         onclick="updateCityFont('${f.value.replace(/'/g, "\\'")}')">
+      <div class="font-card-text" style="font-family:'${f.value}',sans-serif">${preview}</div>
+      <div class="font-card-name">${f.label}</div>
+    </div>
+  `).join('');
+    }
+
+    function renderStylePicker() {
+      const row = document.getElementById('style-picker-row');
+      if (!row) return;
+      row.innerHTML = '';
+      CITY_STYLES.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'style-card' + (state.cityTextStyle === s.value ? ' active' : '');
+        card.onclick = () => updateCityStyle(s.value);
+
+        const pc = document.createElement('canvas');
+        pc.width = 106; pc.height = 44;
+        drawStylePreview(pc, s.value);
+
+        const lbl = document.createElement('div');
+        lbl.className = 'style-card-name';
+        lbl.textContent = s.label;
+
+        card.appendChild(pc);
+        card.appendChild(lbl);
+        row.appendChild(card);
+      });
+    }
+
+    function drawStylePreview(cv, styleVal) {
+      const ctx = cv.getContext('2d');
+      const W = cv.width, H = cv.height;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#0b1929';
+      ctx.fillRect(0, 0, W, H);
+
+      const text = state.city || 'City';
+      const font = state.cityFont || 'Inter';
+      const sz = 15;
+
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      ctx.shadowColor = 'rgba(0,0,0,0.5)';
+      ctx.shadowBlur = 2;
+
+      if (styleVal === 'normal') {
+        ctx.font = `700 ${sz}px '${font}',sans-serif`;
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText(text, W / 2, H / 2);
+      } else if (styleVal === 'arc-up') {
+        const r = W * 0.55, cx = W / 2, cy = H / 2 + r;
+        _miniArcText(ctx, text, font, sz, cx, cy, r, 'bottom');
+      } else if (styleVal === 'arc-down') {
+        const r = W * 0.55, cx = W / 2, cy = H / 2 - r;
+        _miniArcText(ctx, text, font, sz, cx, cy, r, 'top');
+      } else if (styleVal === 'wave') {
+        const chars = [...text];
+        ctx.font = `700 ${sz}px '${font}',sans-serif`;
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        const ws = chars.map(c => ctx.measureText(c).width);
+        const total = ws.reduce((a, b) => a + b, 0);
+        let x = W / 2 - total / 2;
+        const amp = 4;
+        chars.forEach((ch, i) => {
+          const y = H / 2 + Math.sin((i / Math.max(chars.length - 1, 1)) * Math.PI * 2.2) * amp;
+          ctx.fillText(ch, x, y); x += ws[i];
+        });
+      } else if (styleVal === 'size-fade') {
+        const chars = [...text];
+        const n = chars.length;
+        const sizes = chars.map((_, i) => sz * (0.52 + Math.sin((n > 1 ? i / (n - 1) : 0.5) * Math.PI) * 0.48));
+        const ws = chars.map((ch, i) => { ctx.font = `700 ${sizes[i]}px '${font}',sans-serif`; return ctx.measureText(ch).width; });
+        const total = ws.reduce((a, b) => a + b, 0);
+        let x = W / 2 - total / 2;
+        chars.forEach((ch, i) => {
+          ctx.font = `700 ${sizes[i]}px '${font}',sans-serif`;
+          ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+          ctx.fillText(ch, x, H / 2 + 5 - (sizes[i] - sz * 0.52) * 0.25);
+          x += ws[i];
+        });
+      }
+    }
+
+    function _miniArcText(ctx, text, font, sz, cx, cy, r, baseline) {
+      const chars = [...text];
+      ctx.font = `700 ${sz}px '${font}',sans-serif`;
+      ctx.textBaseline = baseline;
+      const total = chars.reduce((s, c) => s + ctx.measureText(c).width, 0);
+      let a = (baseline === 'bottom' ? -1 : 1) * Math.PI / 2 - total / (2 * r);
+      chars.forEach(ch => {
+        const cw = ctx.measureText(ch).width;
+        a += (cw / 2) / r;
+        ctx.save();
+        ctx.translate(cx + r * Math.cos(a), cy + r * Math.sin(a));
+        ctx.rotate(a + Math.PI / 2);
+        ctx.fillText(ch, 0, 0);
+        ctx.restore();
+        a += (cw / 2) / r;
+      });
     }
 
     function downloadPortrait() {
