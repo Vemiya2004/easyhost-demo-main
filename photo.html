@@ -7,7 +7,6 @@
   <title>Step 3 — Add Your Photo | EasyH</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="icon" type="image/png" href="public/assets/favicon.png" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
     rel="stylesheet" />
 
@@ -527,8 +526,13 @@
 
     function loadPhotoFile(f) {
       state.photoFile = f;
-      state.photoUrl = URL.createObjectURL(f);
-      document.getElementById('photo-thumb').src = state.photoUrl;
+      // Convert file to data URL so it persists across page navigation
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        state.photoUrl = e.target.result;
+        document.getElementById('photo-thumb').src = state.photoUrl;
+      };
+      reader.readAsDataURL(f);
       document.getElementById('photo-preview').classList.add('show');
     }
 
