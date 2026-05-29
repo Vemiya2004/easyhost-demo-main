@@ -302,9 +302,30 @@
   </div>
 
   <script>
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? ''
-      : 'https://easyhost-backend.onrender.com';
+    // Get API base URL from environment or detect based on hostname
+    let API_BASE = '';
+    
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      // Local development - use relative URL (expects backend on same port or proxied)
+      API_BASE = '';
+    } else {
+      // Production - try multiple strategies
+      // 1. Check for custom window variable (can be set by build/deployment)
+      if (window.__API_BASE__) {
+        API_BASE = window.__API_BASE__;
+      }
+      // 2. Try same-domain API endpoint first (e.g., easyh.space/api)
+      else if (window.location.protocol === 'https:') {
+        API_BASE = `${window.location.protocol}//${window.location.host}`;
+      }
+      // 3. Fallback to external backend
+      else {
+        API_BASE = 'https://easyhost-backend.onrender.com';
+      }
+    }
+
+    console.log('[location] API_BASE:', API_BASE);
+    console.log('[location] hostname:', window.location.hostname);
 
     function goBack() {
       window.location.href = 'index.html';
@@ -326,7 +347,10 @@
       btn.innerHTML = '<span class="spin">⟳</span> Locating…';
 
       try {
-        const r = await fetch(`${API_BASE}/api/geocode`, {
+        const url = `${API_BASE}/api/geocode`;
+        console.log('[location] Fetching:', url);
+        
+        const r = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ q }),
@@ -334,7 +358,7 @@
         const d = await r.json();
         
         if (!r.ok) {
-          console.error('[location] Geocode error:', r.status, d);
+          console.error('[location] Geocode HTTP error:', r.status, d);
           throw new Error(d.error || 'Not found');
         }
 
@@ -348,7 +372,7 @@
 
         window.location.href = 'map.html';
       } catch (e) {
-        console.error('[location] Geocode exception:', e);
+        console.error('[location] Geocode error:', e.message, 'URL:', `${API_BASE}/api/geocode`);
         err.classList.add('show');
       } finally {
         btn.disabled = false;
