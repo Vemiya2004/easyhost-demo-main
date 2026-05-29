@@ -490,9 +490,24 @@
   </div>
 
   <script>
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? ''
-      : 'https://easyhost-backend.onrender.com';
+    // Get API base URL from environment or detect based on hostname
+    let API_BASE = '';
+    
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      // Local development - use relative URL
+      API_BASE = '';
+    } else {
+      // Production - try multiple strategies
+      if (window.__API_BASE__) {
+        API_BASE = window.__API_BASE__;
+      } else if (window.location.protocol === 'https:') {
+        API_BASE = `${window.location.protocol}//${window.location.host}`;
+      } else {
+        API_BASE = 'https://easyhost-backend.onrender.com';
+      }
+    }
+
+    console.log('[photo] API_BASE:', API_BASE);
 
     const state = {
       photoFile: null,
