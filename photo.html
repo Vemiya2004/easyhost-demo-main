@@ -588,6 +588,33 @@
         state.mapZoom = parseFloat(sessionStorage.getItem('easyh_mapZoom')) || 0;
         state.pinLngLat = JSON.parse(sessionStorage.getItem('easyh_pinLngLat') || '{}');
 
+        // Process the uploaded photo before saving it.
+        let finalImgSrc = state.photoUrl;
+        if (state.photoUrl && state.removeBackground && state.photoFile) {
+          const formData = new FormData();
+          formData.append('image_file', state.photoFile);
+
+          try {
+            document.querySelector('.gen-sub').textContent = 'Removing background via AI…';
+            const res = await fetch(`${API_BASE}/api/removebg`, {
+              method: 'POST',
+              body: formData,
+            });
+
+            if (res.ok) {
+              const blob = await res.blob();
+              finalImgSrc = URL.createObjectURL(blob);
+            } else {
+              const errorText = await res.text();
+              console.error('RemoveBG API failed:', res.status, errorText);
+              document.querySelector('.gen-sub').textContent = 'Background removal failed, using original photo.';
+            }
+          } catch (err) {
+            console.error('RemoveBG API failed, using original photo:', err);
+            document.querySelector('.gen-sub').textContent = 'Background removal failed, using original photo.';
+          }
+        }
+
         // Log generation
         if (state.city && state.country) {
           fetch(`${API_BASE}/api/generate`, {
@@ -603,7 +630,7 @@
         }
 
         // Save all data and redirect to output page
-        sessionStorage.setItem('easyh_photoUrl', state.photoUrl || '');
+        sessionStorage.setItem('easyh_photoUrl', finalImgSrc || '');
         sessionStorage.setItem('easyh_removeBackground', state.removeBackground);
 
         await delay(500);
