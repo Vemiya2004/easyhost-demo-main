@@ -304,24 +304,16 @@
   <script>
     // Get API base URL from environment or detect based on hostname
     let API_BASE = '';
-    
+
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
       // Local development - use relative URL (expects backend on same port or proxied)
       API_BASE = '';
     } else {
-      // Production - try multiple strategies
-      // 1. Check for custom window variable (can be set by build/deployment)
-      if (window.__API_BASE__) {
-        API_BASE = window.__API_BASE__;
-      }
-      // 2. Try same-domain API endpoint first (e.g., easyh.space/api)
-      else if (window.location.protocol === 'https:') {
-        API_BASE = `${window.location.protocol}//${window.location.host}`;
-      }
-      // 3. Fallback to external backend
-      else {
-        API_BASE = 'https://easyhost-backend.onrender.com';
-      }
+      // Production - prefer an explicit backend URL. Use `window.__API_BASE__` when
+      // provided by the deployment. Otherwise fall back to the known backend URL so
+      // static hosting on the same origin doesn't accidentally send POSTs to a
+      // non-API static server (which returns HTML and causes the JSON parse error).
+      API_BASE = window.__API_BASE__ || 'https://easyhost-backend.onrender.com';
     }
 
     console.log('[location] API_BASE:', API_BASE);
@@ -383,10 +375,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
