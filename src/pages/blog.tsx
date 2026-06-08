@@ -83,13 +83,13 @@ function ArticleView({ article, content, loading }: any) {
           <a href="/" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
             Home
           </a>
-          <a href="/about-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
+          <a href="/public/about-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
             About Us
           </a>
-          <a href="/blog" style={{ fontSize: 14, fontWeight: 500, color: "#111111" }}>
+          <a href="/public/blog" style={{ fontSize: 14, fontWeight: 500, color: "#111111" }}>
             Blog
           </a>
-          <a href="/contact-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
+          <a href="/public/contact-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
             Contact
           </a>
         </nav>
@@ -252,22 +252,22 @@ function ArticleView({ article, content, loading }: any) {
       >
         <div style={{ fontSize: 13, color: "#999999" }}>© 2026 EasyH · easyh.space</div>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-          <a href="/about-us.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/about-us.html" style={{ fontSize: 13, color: "#999999" }}>
             About Us
           </a>
-          <a href="/privacy.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/privacy.html" style={{ fontSize: 13, color: "#999999" }}>
             Privacy Policy
           </a>
-          <a href="/terms.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/terms.html" style={{ fontSize: 13, color: "#999999" }}>
             Terms & Conditions
           </a>
-          <a href="/contact-us.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/contact-us.html" style={{ fontSize: 13, color: "#999999" }}>
             Contact
           </a>
-          <a href="/faq.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/faq.html" style={{ fontSize: 13, color: "#999999" }}>
             FAQ
           </a>
-          <a href="/blog" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/blog" style={{ fontSize: 13, color: "#999999" }}>
             Blog
           </a>
         </div>
@@ -315,13 +315,13 @@ function BlogListing({ selectedCategory, setSelectedCategory }: any) {
           <a href="/" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
             Home
           </a>
-          <a href="/about-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
+          <a href="/public/about-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
             About Us
           </a>
-          <a href="/blog" style={{ fontSize: 14, fontWeight: 500, color: "#111111" }}>
+          <a href="/public/blog" style={{ fontSize: 14, fontWeight: 500, color: "#111111" }}>
             Blog
           </a>
-          <a href="/contact-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
+          <a href="/public/contact-us.html" style={{ fontSize: 14, fontWeight: 500, color: "#888888" }}>
             Contact
           </a>
         </nav>
@@ -515,22 +515,22 @@ function BlogListing({ selectedCategory, setSelectedCategory }: any) {
       >
         <div style={{ fontSize: 13, color: "#999999" }}>© 2026 EasyH · easyh.space</div>
         <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
-          <a href="/about-us.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/about-us.html" style={{ fontSize: 13, color: "#999999" }}>
             About Us
           </a>
-          <a href="/privacy.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/privacy.html" style={{ fontSize: 13, color: "#999999" }}>
             Privacy Policy
           </a>
-          <a href="/terms.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/terms.html" style={{ fontSize: 13, color: "#999999" }}>
             Terms & Conditions
           </a>
-          <a href="/contact-us.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/contact-us.html" style={{ fontSize: 13, color: "#999999" }}>
             Contact
           </a>
-          <a href="/faq.html" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/faq.html" style={{ fontSize: 13, color: "#999999" }}>
             FAQ
           </a>
-          <a href="/blog" style={{ fontSize: 13, color: "#999999" }}>
+          <a href="/public/blog" style={{ fontSize: 13, color: "#999999" }}>
             Blog
           </a>
         </div>
