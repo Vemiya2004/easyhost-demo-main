@@ -83,3 +83,9 @@ export function getAllCategories(): string[] {
   const categories = new Set(blogArticles.map((article) => article.category));
   return Array.from(categories).sort();
 }
+
+
+
+
+
+
