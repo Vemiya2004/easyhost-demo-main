@@ -10,35 +10,35 @@
   </url>
 
   <url>
-    <loc>https://easyh.space/about-us.html</loc>
+    <loc>https://easyh.space/public/about-us.html</loc>
     <lastmod>2026-06-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/contact-us.html</loc>
+    <loc>https://easyh.space/public/contact-us.html</loc>
     <lastmod>2026-06-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/faq.html</loc>
+    <loc>https://easyh.space/public/faq.html</loc>
     <lastmod>2026-06-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/privacy.html</loc>
+    <loc>https://easyh.space/public/privacy.html</loc>
     <lastmod>2026-06-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/terms.html</loc>
+    <loc>https://easyh.space/public/terms.html</loc>
     <lastmod>2026-06-08</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
@@ -46,7 +46,7 @@
 
   <!-- Blog Section -->
   <url>
-    <loc>https://easyh.space/blog</loc>
+    <loc>https://easyh.space/public/blog</loc>
     <lastmod>2026-06-08</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
@@ -54,35 +54,35 @@
 
   <!-- Blog Articles -->
   <url>
-    <loc>https://easyh.space/blog/why-personalized-map-art-meaningful-gift</loc>
+    <loc>https://easyh.space/public/blog/why-personalized-map-art-meaningful-gift</loc>
     <lastmod>2026-06-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/blog/custom-map-portraits-capture-memories</loc>
+    <loc>https://easyh.space/public/blog/custom-map-portraits-capture-memories</loc>
     <lastmod>2026-06-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/blog/choosing-perfect-location-map-artwork</loc>
+    <loc>https://easyh.space/public/blog/choosing-perfect-location-map-artwork</loc>
     <lastmod>2026-06-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/blog/modern-home-decor-custom-maps</loc>
+    <loc>https://easyh.space/public/blog/modern-home-decor-custom-maps</loc>
     <lastmod>2026-06-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
 
   <url>
-    <loc>https://easyh.space/blog/story-behind-personalized-location-art</loc>
+    <loc>https://easyh.space/public/blog/story-behind-personalized-location-art</loc>
     <lastmod>2026-06-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
