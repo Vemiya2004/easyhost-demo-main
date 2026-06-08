@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Learn about EasyH - the free map portrait generator. Discover our mission to create personalized, meaningful map art for everyone worldwide." />
+  <meta name="keywords" content="about easyh, map portrait creator, personalized map art, custom location artwork, free map generator" />
+  <meta name="author" content="EasyH" />
+  <link rel="canonical" href="https://easyh.space/about-us.html" />
+  <link rel="icon" type="image/png" href="public/assets/favicon.png" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://easyh.space/about-us.html" />
+  <meta property="og:title" content="About EasyH — Free Map Portrait Generator" />
+  <meta property="og:description" content="Discover the story behind EasyH and our mission to create personalized, meaningful map art." />
+  <meta property="og:image" content="https://easyh.space/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://easyh.space/about-us.html" />
+  <meta property="twitter:title" content="About EasyH — Free Map Portrait Generator" />
+  <meta property="twitter:description" content="Discover the story behind EasyH and our mission to create personalized, meaningful map art." />
+  <meta property="twitter:image" content="https://easyh.space/og-image.jpg" />
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "EasyH",
+      "url": "https://easyh.space",
+      "logo": "https://easyh.space/og-image.jpg",
+      "description": "Free map portrait generator - create personalized, stylized map art of any city in the world",
+      "sameAs": [
+        "https://easyh.space"
+      ],
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Support",
+        "url": "https://easyh.space/contact-us.html"
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ============================================
+       TOKENS
+    ============================================ */
+    :root {
+      --white: #ffffff;
+      --bg: #f7f7f5;
+      --black: #111111;
+      --text: #111111;
+      --muted: #555555;
+      --dim: #888888;
+      --faint: #bbbbbb;
+      --border: #e5e5e5;
+      --border2: #dddddd;
+      --error: #cc3333;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'DM Mono', 'Courier New', monospace;
+      --ease: 0.25s ease;
+    }
+
+    /* ============================================
+       RESET
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--text);
+      overflow: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    input,
+    textarea {
+      font-family: inherit;
+    }
+
+    /* ============================================
+       GRAIN TEXTURE
+    ============================================ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================
+       SCROLLBAR
+    ============================================ */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+    }
+
+    /* ============================================
+       HEADER
+    ============================================ */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 56px);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow var(--ease);
+    }
+
+    .site-header.scrolled {
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .header-logo {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--black);
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header-nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dim);
+      transition: color var(--ease);
+    }
+
+    .header-nav a:hover,
+    .header-nav a.active {
+      color: var(--black);
+    }
+
+    @media (max-width: 560px) {
+      .header-nav {
+        gap: 16px;
+      }
+
+      .header-nav a {
+        font-size: 13px;
+      }
+    }
+
+    /* ============================================
+       BUTTONS
+    ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      transition: all var(--ease);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    .btn-secondary {
+      background: var(--white);
+      color: var(--black);
+      border: 1.5px solid var(--black);
+    }
+
+    .btn-secondary:hover {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    /* ============================================
+       PAGE SECTIONS
+    ============================================ */
+    .page-wrap {
+      padding-top: 60px;
+    }
+
+    .hero-section {
+      padding: clamp(64px, 10vw, 120px) clamp(20px, 7vw, 80px);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .hero-heading {
+      font-size: clamp(40px, 7vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--black);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 400;
+      color: #666;
+      line-height: 1.65;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .section {
+      padding: clamp(64px, 8vw, 96px) clamp(20px, 7vw, 80px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: block;
+    }
+
+    .section-heading {
+      font-size: clamp(28px, 5vw, 48px);
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 36px;
+      line-height: 1.2;
+    }
+
+    .section-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .section-text {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 24px;
+    }
+
+    .section-text strong {
+      color: var(--black);
+      font-weight: 600;
+    }
+
+    /* Features grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin: 48px 0;
+    }
+
+    @media (max-width: 900px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    .feature-item {
+      padding: 0;
+    }
+
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .feature-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+
+    .feature-desc {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* Process steps */
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      margin: 48px 0;
+    }
+
+    @media (max-width: 1000px) {
+      .process-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .process-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .process-step {
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      transition: all var(--ease);
+    }
+
+    .process-step:hover {
+      border-color: var(--black);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .step-number {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--faint);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .step-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+
+    .step-desc {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* CTA section */
+    .cta-section {
+      padding: clamp(64px, 8vw, 96px) clamp(20px, 7vw, 80px);
+      text-align: center;
+      border: none;
+    }
+
+    .cta-heading {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 14px;
+    }
+
+    .cta-sub {
+      font-size: 17px;
+      color: var(--muted);
+      margin-bottom: 32px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Ad placeholders */
+    .ad-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f5f5f5;
+      border: 1px dashed #ddd;
+      margin: 40px 0;
+      min-height: 100px;
+      font-size: 12px;
+      color: #999;
+      font-family: var(--mono);
+    }
+
+    .ad-container.ad-rectangle {
+      width: 100%;
+      max-width: 336px;
+      height: 280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Footer */
+    .site-footer {
+      padding: 28px clamp(20px, 7vw, 80px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--white);
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .footer-center {
+      font-size: 12px;
+      color: #bbb;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: #999;
+      transition: color var(--ease);
+    }
+
+    .footer-links a:hover {
+      color: var(--black);
+    }
+
+    @media (max-width: 600px) {
+      .site-footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .footer-links {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header" id="site-header">
+    <a href="/" class="header-logo">EasyH</a>
+    <nav class="header-nav">
+      <a href="/" class="">Home</a>
+      <a href="/about-us.html" class="active">About Us</a>
+      <a href="/blog" class="">Blog</a>
+      <a href="/contact-us.html">Contact</a>
+      <a href="/faq.html">FAQ</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <span class="hero-tag">About EasyH</span>
+      <h1 class="hero-heading">Making Personal Map Art Accessible to Everyone</h1>
+      <p class="hero-sub">We believe that personalized, meaningful artwork should be free and easy to create. EasyH transforms the places that matter most to you into beautiful, stylized map portraits.</p>
+    </section>
+
+    <!-- What is EasyH Section -->
+    <section class="section">
+      <div class="section-content">
+        <span class="section-label">What is EasyH?</span>
+        <h2 class="section-heading">Creating Beautiful Map Portraits, Instantly</h2>
+        <p class="section-text">EasyH is a free online tool that generates stunning, stylized map portraits of any city in the world. Simply choose a location, upload a photo of yourself, and we'll create a beautiful composite artwork that combines your portrait with the map of that special place — all completely free, no sign-up required.</p>
+        <p class="section-text">Whether you want to commemorate a favorite travel destination, celebrate where you're from, or create a meaningful gift for someone special, EasyH makes it simple. In just three steps, you'll have a high-quality, shareable artwork ready to download and enjoy.</p>
+        <p class="section-text">Our technology uses <strong>OpenStreetMap data</strong> to accurately render the streets and layout of your chosen city, combined with your personal photo to create a unique, one-of-a-kind piece of art that tells your story.</p>
+      </div>
+    </section>
+
+    <!-- Ad placeholder -->
+    <div style="padding: 0 clamp(20px, 7vw, 80px); display: flex; justify-content: center;">
+      <div class="ad-container ad-rectangle" id="ad-middle-1">AD SPACE — Google AdSense Ad Unit (336x280)</div>
+    </div>
+
+    <!-- Mission & Values Section -->
+    <section class="section">
+      <div class="section-content">
+        <span class="section-label">Our Mission</span>
+        <h2 class="section-heading">Empowering Creative Expression</h2>
+        <p class="section-text">At EasyH, our mission is simple: <strong>we want to democratize personalized artwork</strong>. For too long, custom art has been expensive, complicated, and inaccessible. We're changing that.</p>
+        <p class="section-text">We believe that everyone deserves the ability to create meaningful, personalized artwork without barriers. Your story, your travels, your memories — they deserve to be celebrated. That's why EasyH is entirely free, requires no technical skills, and produces professional-quality results in seconds.</p>
+
+        <div class="features-grid" style="margin-top: 40px;">
+          <div class="feature-item">
+            <span class="feature-icon">🎨</span>
+            <h3 class="feature-title">Artistic Quality</h3>
+            <p class="feature-desc">Our advanced rendering engine creates beautiful, stylized map artwork that rivals professional design.</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">⚡</span>
+            <h3 class="feature-title">Instant Results</h3>
+            <p class="feature-desc">Generate your complete portrait in seconds. No waiting, no processing delays, just immediate gratification.</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🌍</span>
+            <h3 class="feature-title">Global Coverage</h3>
+            <p class="feature-desc">Create portraits for any city in the world using real, accurate OpenStreetMap data.</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">💯</span>
+            <h3 class="feature-title">100% Free</h3>
+            <p class="feature-desc">No hidden fees, no premium tiers, no catches. Create unlimited portraits at no cost.</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🔒</span>
+            <h3 class="feature-title">Your Privacy Matters</h3>
+            <p class="feature-desc">We never store your photos or personal data. Create with complete confidence.</p>
+          </div>
+          <div class="feature-item">
+            <span class="feature-icon">🎁</span>
+            <h3 class="feature-title">Perfect for Gifting</h3>
+            <p class="feature-desc">Create meaningful gifts for loved ones featuring their favorite cities or memorable travel destinations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose EasyH Section -->
+    <section class="section">
+      <div class="section-content">
+        <span class="section-label">Why Choose EasyH</span>
+        <h2 class="section-heading">What Sets Us Apart</h2>
+
+        <div style="margin-top: 40px;">
+          <div style="margin-bottom: 40px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: var(--black); margin-bottom: 12px;">Superior Quality Without the Cost</h3>
+            <p class="section-text">While professional map portrait services charge $50-200+ per piece, EasyH delivers comparable quality completely free. We've invested in advanced rendering technology so you don't have to invest in expensive services.</p>
+          </div>
+
+          <div style="margin-bottom: 40px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: var(--black); margin-bottom: 12px;">Privacy-First Approach</h3>
+            <p class="section-text">Unlike many online tools, we don't store your photos, track your data, or sell your information. Your photos are processed and immediately discarded. You maintain complete control over your creative work.</p>
+          </div>
+
+          <div style="margin-bottom: 40px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: var(--black); margin-bottom: 12px;">No Account Required</h3>
+            <p class="section-text">Just visit, create, and download. No sign-ups, no logins, no email confirmations. We respect your time and privacy by keeping things simple.</p>
+          </div>
+
+          <div style="margin-bottom: 40px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: var(--black); margin-bottom: 12px;">Accurate, Real-World Maps</h3>
+            <p class="section-text">Our maps are powered by OpenStreetMap, the world's most comprehensive open-source map data. Every street, every landmark, every detail is accurate and up-to-date.</p>
+          </div>
+
+          <div style="margin-bottom: 40px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: var(--black); margin-bottom: 12px;">Complete Creative Control</h3>
+            <p class="section-text">Choose from multiple map styles and color schemes to customize your portrait exactly how you want it. Your creation should reflect your personal style.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad placeholder -->
+    <div style="padding: 0 clamp(20px, 7vw, 80px); display: flex; justify-content: center;">
+      <div class="ad-container ad-rectangle" id="ad-middle-2">AD SPACE — Google AdSense Ad Unit (336x280)</div>
+    </div>
+
+    <!-- Our Process Section -->
+    <section class="section">
+      <div class="section-content">
+        <span class="section-label">How We Work</span>
+        <h2 class="section-heading">The Process is Simple</h2>
+        <p class="section-text" style="margin-bottom: 40px;">Creating your map portrait involves just three straightforward steps. We've designed the process to be as intuitive and fast as possible.</p>
+
+        <div class="process-grid">
+          <div class="process-step">
+            <div class="step-number">Step 01</div>
+            <h3 class="step-title">Choose Location</h3>
+            <p class="step-desc">Search for any city in the world. Our database covers hundreds of thousands of locations with accurate, detailed map data.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-number">Step 02</div>
+            <h3 class="step-title">Upload Photo</h3>
+            <p class="step-desc">Add any photo of yourself. Optionally remove the background for a cleaner, more professional-looking final result.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-number">Step 03</div>
+            <h3 class="step-title">Customize</h3>
+            <p class="step-desc">Choose your map style, colors, and layout preferences to create a portrait that matches your taste perfectly.</p>
+          </div>
+          <div class="process-step">
+            <div class="step-number">Step 04</div>
+            <h3 class="step-title">Download & Share</h3>
+            <p class="step-desc">Get a high-resolution 900×1200px image instantly. Share it on social media, print it, or use it however you'd like.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quality & Satisfaction Section -->
+    <section class="section">
+      <div class="section-content">
+        <span class="section-label">Our Commitment</span>
+        <h2 class="section-heading">Quality You Can Trust</h2>
+        <p class="section-text">We're committed to providing the best possible experience for every user. That means:</p>
+
+        <div style="margin-top: 32px; margin-bottom: 32px;">
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            <li style="padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 16px; color: var(--muted); line-height: 1.7;">
+              <strong style="color: var(--black);">High-Quality Output:</strong> Every portrait is rendered at 900×1200px resolution, suitable for digital sharing or professional printing.
+            </li>
+            <li style="padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 16px; color: var(--muted); line-height: 1.7;">
+              <strong style="color: var(--black);">Fast Processing:</strong> Most portraits generate in under 30 seconds, even during peak usage times.
+            </li>
+            <li style="padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 16px; color: var(--muted); line-height: 1.7;">
+              <strong style="color: var(--black);">Reliable Uptime:</strong> We maintain 99.9% uptime so your creations are always just a few clicks away.
+            </li>
+            <li style="padding: 16px 0; border-bottom: 1px solid var(--border); font-size: 16px; color: var(--muted); line-height: 1.7;">
+              <strong style="color: var(--black);">Continuous Improvement:</strong> We regularly update our technology and add new features based on user feedback.
+            </li>
+            <li style="padding: 16px 0; font-size: 16px; color: var(--muted); line-height: 1.7;">
+              <strong style="color: var(--black);">Data Privacy:</strong> Your photos are processed in real-time and never stored on our servers or shared with third parties.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad placeholder -->
+    <div style="padding: 0 clamp(20px, 7vw, 80px); display: flex; justify-content: center;">
+      <div class="ad-container ad-rectangle" id="ad-middle-3">AD SPACE — Google AdSense Ad Unit (336x280)</div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2 class="cta-heading">Ready to Create Your Map Portrait?</h2>
+      <p class="cta-sub">Join thousands of people creating beautiful, personalized map art. It's free, takes just minutes, and requires no sign-up.</p>
+      <a href="/location.html" class="btn btn-primary" style="font-size: 16px; padding: 16px 36px;">Create Your Portrait Now →</a>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-copy">© 2026 EasyH · easyh.space</div>
+    <div class="footer-links">
+      <a href="/about-us.html">About Us</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms & Conditions</a>
+      <a href="/contact-us.html">Contact</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/blog">Blog</a>
+    </div>
+  </footer>
+
+  <script>
+    // Add scroll shadow to header
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 0) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Mark active nav link
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.header-nav a').forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Frequently asked questions about EasyH. Find answers about map portraits, customization, pricing, and technical support." />
+  <meta name="keywords" content="faq, frequently asked questions, easyh help, map portrait guide, how to use easyh" />
+  <meta name="author" content="EasyH" />
+  <link rel="canonical" href="https://easyh.space/faq.html" />
+  <link rel="icon" type="image/png" href="public/assets/favicon.png" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://easyh.space/faq.html" />
+  <meta property="og:title" content="FAQ — EasyH Map Portrait Generator" />
+  <meta property="og:description" content="Find answers to common questions about EasyH, map portraits, customization, and support." />
+  <meta property="og:image" content="https://easyh.space/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://easyh.space/faq.html" />
+  <meta property="twitter:title" content="FAQ — EasyH Map Portrait Generator" />
+  <meta property="twitter:description" content="Find answers to common questions about EasyH and map portraits." />
+  <meta property="twitter:image" content="https://easyh.space/og-image.jpg" />
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "@id": "https://easyh.space/faq.html#what-is-map-portrait",
+          "name": "What is a custom map portrait?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "A map portrait is an artistic composite that combines a map of your chosen city with your personal photograph. The result is a beautiful, stylized artwork that merges your portrait with the street layout of a meaningful location."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://easyh.space/faq.html#how-place-order",
+          "name": "How do I place an order?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Simply visit the main site, choose a city, upload your photo, customize the map style, and download your portrait. It's completely free and no order is needed."
+          }
+        },
+        {
+          "@type": "Question",
+          "@id": "https://easyh.space/faq.html#how-long-delivery",
+          "name": "How long does delivery take?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Most portraits generate instantly or within 30 seconds. You can download your high-resolution image immediately after creation."
+          }
+        }
+      ]
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ============================================
+       TOKENS
+    ============================================ */
+    :root {
+      --white: #ffffff;
+      --bg: #f7f7f5;
+      --black: #111111;
+      --text: #111111;
+      --muted: #555555;
+      --dim: #888888;
+      --faint: #bbbbbb;
+      --border: #e5e5e5;
+      --border2: #dddddd;
+      --error: #cc3333;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'DM Mono', 'Courier New', monospace;
+      --ease: 0.25s ease;
+    }
+
+    /* ============================================
+       RESET
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--text);
+      overflow: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    /* ============================================
+       GRAIN TEXTURE
+    ============================================ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================
+       SCROLLBAR
+    ============================================ */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+    }
+
+    /* ============================================
+       HEADER
+    ============================================ */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 56px);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow var(--ease);
+    }
+
+    .site-header.scrolled {
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .header-logo {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--black);
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header-nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dim);
+      transition: color var(--ease);
+    }
+
+    .header-nav a:hover,
+    .header-nav a.active {
+      color: var(--black);
+    }
+
+    @media (max-width: 560px) {
+      .header-nav {
+        gap: 16px;
+      }
+
+      .header-nav a {
+        font-size: 13px;
+      }
+    }
+
+    /* ============================================
+       PAGE SECTIONS
+    ============================================ */
+    .page-wrap {
+      padding-top: 60px;
+    }
+
+    .hero-section {
+      padding: clamp(64px, 10vw, 120px) clamp(20px, 7vw, 80px);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .hero-heading {
+      font-size: clamp(40px, 7vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--black);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 400;
+      color: #666;
+      line-height: 1.65;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: clamp(64px, 8vw, 96px) clamp(20px, 7vw, 80px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* FAQ List */
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-category {
+      margin-bottom: 40px;
+    }
+
+    .faq-category-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--black);
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+      margin-bottom: 20px;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-size: 12px;
+    }
+
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+
+    .faq-q {
+      width: 100%;
+      text-align: left;
+      padding: 20px 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--black);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      transition: color var(--ease);
+    }
+
+    .faq-q:hover {
+      color: var(--dim);
+    }
+
+    .faq-q-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      color: var(--faint);
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.open .faq-q-icon {
+      transform: rotate(45deg);
+      color: var(--black);
+    }
+
+    .faq-a {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .faq-item.open .faq-a {
+      max-height: 600px;
+      padding-bottom: 20px;
+    }
+
+    .faq-a a {
+      color: var(--black);
+      font-weight: 500;
+      transition: color var(--ease);
+    }
+
+    .faq-a a:hover {
+      color: var(--dim);
+    }
+
+    /* Ad placeholders */
+    .ad-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f5f5f5;
+      border: 1px dashed #ddd;
+      margin: 40px 0;
+      min-height: 100px;
+      font-size: 12px;
+      color: #999;
+      font-family: var(--mono);
+    }
+
+    .ad-container.ad-rectangle {
+      width: 100%;
+      max-width: 336px;
+      height: 280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* CTA section */
+    .cta-section {
+      padding: clamp(64px, 8vw, 96px) clamp(20px, 7vw, 80px);
+      text-align: center;
+      border: none;
+    }
+
+    .cta-heading {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 14px;
+    }
+
+    .cta-sub {
+      font-size: 17px;
+      color: var(--muted);
+      margin-bottom: 32px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      transition: all var(--ease);
+      white-space: nowrap;
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn:hover {
+      background: #333;
+    }
+
+    /* Footer */
+    .site-footer {
+      padding: 28px clamp(20px, 7vw, 80px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--white);
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: #999;
+      transition: color var(--ease);
+    }
+
+    .footer-links a:hover {
+      color: var(--black);
+    }
+
+    @media (max-width: 600px) {
+      .site-footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .footer-links {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header" id="site-header">
+    <a href="/" class="header-logo">EasyH</a>
+    <nav class="header-nav">
+      <a href="/">Home</a>
+      <a href="/about-us.html">About Us</a>
+      <a href="/blog">Blog</a>
+      <a href="/contact-us.html">Contact</a>
+      <a href="/faq.html" class="active">FAQ</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <span class="hero-tag">FAQ</span>
+      <h1 class="hero-heading">Frequently Asked Questions</h1>
+      <p class="hero-sub">Find answers to common questions about EasyH, map portraits, and how to create beautiful artwork.</p>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section">
+      <div class="faq-list">
+        <!-- Getting Started -->
+        <div class="faq-category">
+          <div class="faq-category-title">Getting Started</div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>What is a custom map portrait?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              A map portrait is a unique artistic creation that combines your personal photograph with a stylized map of a meaningful location. We blend your photo with the street layout and features of your chosen city to create a beautiful, one-of-a-kind piece of art that tells your story.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>How do I create my first map portrait?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Creating a portrait is simple! Visit the main EasyH website, then: (1) Choose any city in the world, (2) Upload a photo of yourself, (3) Customize the map style and colors, (4) Download your high-resolution portrait. The entire process takes just a few minutes and requires no sign-up.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Do I need to create an account or sign up?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              No! EasyH is completely free and requires zero sign-up. You don't need an account, email confirmation, or any personal registration. Just visit, create, and download. We designed it this way to respect your privacy and your time.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Is EasyH really free?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Yes, 100% free! There are no hidden fees, no premium tiers, and no paid upgrades. You can create unlimited map portraits at no cost. We offer EasyH free to everyone because we believe personalized artwork should be accessible to all.
+            </div>
+          </div>
+        </div>
+
+        <!-- Customization -->
+        <div class="faq-category">
+          <div class="faq-category-title">Customization</div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>What cities can I create portraits for?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              You can create map portraits for any city in the world with available map data. We use OpenStreetMap, which covers hundreds of thousands of locations globally. Simply search for your city name—we'll find it instantly. If your exact location isn't available, try nearby cities or regions.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Can I customize colors and styles?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Absolutely! EasyH offers multiple map styles and color schemes for customization. You can choose different visual themes to match your personal taste or home decor. The goal is to create artwork that's uniquely yours.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Can I request revisions to my portrait?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Of course! Since creation is instant and free, you can create as many variations as you'd like. Adjust the map style, colors, layout, or try a different photo. Regenerate until you're completely satisfied with the result.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>What types of photos work best?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Any clear photo of yourself will work! Portrait photos with good lighting are ideal. You can optionally remove the background for a cleaner result, or keep the background if you prefer. The more recognizable you are in the photo, the better the final portrait will look.
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical -->
+        <div class="faq-category">
+          <div class="faq-category-title">Technical Questions</div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>What file formats are supported?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              You can upload JPG, PNG, or GIF photos. The generated portrait is exported as a high-quality PNG image at 900×1200px resolution, which is perfect for digital sharing or professional printing.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>How long does it take to generate a portrait?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Most portraits are generated instantly or within 30 seconds. Processing time depends on file size and current server load, but we've optimized our system for speed. You'll see your finished portrait almost immediately after uploading your photo.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>What is the resolution of the downloaded image?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Every portrait is generated at 900×1200px resolution in PNG format. This size is ideal for social media sharing, printing at standard 8x10" or 11x14" sizes, or displaying on digital screens. It's large enough for high-quality prints.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Do you store my photos?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              No, we don't store your photos. Your image is processed in real-time and immediately discarded after your portrait is generated. We never retain your personal photos, never share them with third parties, and never use them for any purpose other than creating your portrait.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Is my data private and secure?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Yes. Privacy is core to EasyH. We don't collect personal information, track users, or share data with anyone. Since you don't need to sign up, we don't even know who you are. Your photos are processed locally and never stored on our servers.
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders & Payment -->
+        <div class="faq-category">
+          <div class="faq-category-title">Orders & Support</div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Can I print my map portrait?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Absolutely! The high-resolution PNG format is perfect for printing. The 900×1200px resolution works beautifully for standard print sizes like 8x10", 11x14", or A4. You can print at home or use any professional printing service. You own your creations completely.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Can I share my portraits on social media?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Yes! You can share your portraits anywhere—Instagram, Facebook, Twitter, Pinterest, or anywhere else. You fully own your creations and can use them however you'd like. Share them, print them, or keep them private. It's entirely up to you.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Can I use map portraits for commercial purposes?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              For personal use, absolutely. For commercial purposes like selling prints or using in business, please <a href="/contact-us.html">contact us</a> to discuss licensing. We want to support creators while respecting intellectual property rights.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>How do I get help or support?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Have questions or issues? Visit our <a href="/contact-us.html">Contact page</a> to reach our support team. We typically respond to inquiries within 24-48 hours. You can also check our <a href="/about-us.html">About page</a> for more information about how EasyH works.
+            </div>
+          </div>
+        </div>
+
+        <!-- Gifts & Special Uses -->
+        <div class="faq-category">
+          <div class="faq-category-title">Gifts & Uses</div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Are map portraits good gifts?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Yes! Map portraits make thoughtful, personalized gifts. They're perfect for: anniversaries, weddings, travel memories, housewarming gifts, graduation presents, or celebrating a meaningful location. You can create a portrait featuring someone's favorite city or a special place you traveled together.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>Can I create a portrait for someone else?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Absolutely! You can create a portrait using any photo and any city. This makes EasyH perfect for creating personalized gifts for friends and family. Choose their favorite city and a good photo, then you'll have a beautiful, unique gift ready to share or print.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-q" onclick="this.parentElement.classList.toggle('open')">
+              <span>What home decor styles match map portraits?</span>
+              <span class="faq-q-icon">+</span>
+            </button>
+            <div class="faq-a">
+              Map portraits work beautifully in almost any decor style! They complement: modern, minimalist, contemporary, industrial, bohemian, and travel-themed spaces. The customizable map styles and neutral colors mean they'll fit your existing aesthetic perfectly. Display on walls, shelves, or in frames.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad placeholder -->
+    <div style="padding: 0 clamp(20px, 7vw, 80px); display: flex; justify-content: center;">
+      <div class="ad-container ad-rectangle" id="ad-middle-1">AD SPACE — Google AdSense Ad Unit (336x280)</div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2 class="cta-heading">Still Have Questions?</h2>
+      <p class="cta-sub">Can't find the answer you're looking for? Reach out to our support team—we're here to help.</p>
+      <a href="/contact-us.html" class="btn">Contact Us →</a>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-copy">© 2026 EasyH · easyh.space</div>
+    <div class="footer-links">
+      <a href="/about-us.html">About Us</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms & Conditions</a>
+      <a href="/contact-us.html">Contact</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/blog">Blog</a>
+    </div>
+  </footer>
+
+  <script>
+    // Add scroll shadow to header
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 0) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Mark active nav link
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.header-nav a').forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      }
+    });
+  </script>
+</body>
+
+</html>

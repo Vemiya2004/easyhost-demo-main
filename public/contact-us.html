@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Contact EasyH for support, feedback, or inquiries. Get in touch with our team about map portrait generation or general questions." />
+  <meta name="keywords" content="contact easyh, support, customer service, map portrait help, technical support" />
+  <meta name="author" content="EasyH" />
+  <link rel="canonical" href="https://easyh.space/contact-us.html" />
+  <link rel="icon" type="image/png" href="public/assets/favicon.png" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://easyh.space/contact-us.html" />
+  <meta property="og:title" content="Contact EasyH — Get Support" />
+  <meta property="og:description" content="Reach out to our team at EasyH. We're here to help with any questions about map portraits or technical support." />
+  <meta property="og:image" content="https://easyh.space/og-image.jpg" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content="https://easyh.space/contact-us.html" />
+  <meta property="twitter:title" content="Contact EasyH — Get Support" />
+  <meta property="twitter:description" content="Reach out to our team at EasyH. We're here to help with any questions about map portraits." />
+  <meta property="twitter:image" content="https://easyh.space/og-image.jpg" />
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "EasyH",
+      "url": "https://easyh.space",
+      "description": "Free map portrait generator",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Customer Support",
+        "email": "support@easyh.space",
+        "url": "https://easyh.space/contact-us.html"
+      }
+    }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ============================================
+       TOKENS
+    ============================================ */
+    :root {
+      --white: #ffffff;
+      --bg: #f7f7f5;
+      --black: #111111;
+      --text: #111111;
+      --muted: #555555;
+      --dim: #888888;
+      --faint: #bbbbbb;
+      --border: #e5e5e5;
+      --border2: #dddddd;
+      --error: #cc3333;
+      --font: 'Inter', system-ui, -apple-system, sans-serif;
+      --mono: 'DM Mono', 'Courier New', monospace;
+      --ease: 0.25s ease;
+    }
+
+    /* ============================================
+       RESET
+    ============================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--white);
+      color: var(--text);
+      overflow: auto;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    input,
+    textarea {
+      font-family: inherit;
+    }
+
+    /* ============================================
+       GRAIN TEXTURE
+    ============================================ */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+    }
+
+    /* ============================================
+       SCROLLBAR
+    ============================================ */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+    }
+
+    /* ============================================
+       HEADER
+    ============================================ */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 clamp(20px, 5vw, 56px);
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow var(--ease);
+    }
+
+    .site-header.scrolled {
+      box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .header-logo {
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--black);
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header-nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--dim);
+      transition: color var(--ease);
+    }
+
+    .header-nav a:hover,
+    .header-nav a.active {
+      color: var(--black);
+    }
+
+    @media (max-width: 560px) {
+      .header-nav {
+        gap: 16px;
+      }
+
+      .header-nav a {
+        font-size: 13px;
+      }
+    }
+
+    /* ============================================
+       BUTTONS
+    ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font);
+      font-weight: 600;
+      font-size: 15px;
+      padding: 14px 28px;
+      border-radius: 4px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      transition: all var(--ease);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      background: #333;
+    }
+
+    /* ============================================
+       PAGE SECTIONS
+    ============================================ */
+    .page-wrap {
+      padding-top: 60px;
+    }
+
+    .hero-section {
+      padding: clamp(64px, 10vw, 120px) clamp(20px, 7vw, 80px);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .hero-tag {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .hero-heading {
+      font-size: clamp(40px, 7vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--black);
+      margin-bottom: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      font-weight: 400;
+      color: #666;
+      line-height: 1.65;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: clamp(64px, 8vw, 96px) clamp(20px, 7vw, 80px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* Form styling */
+    .contact-section {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 15px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+      color: var(--text);
+      transition: all var(--ease);
+    }
+
+    input[type="text"]:focus,
+    input[type="email"]:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--black);
+      box-shadow: 0 0 0 3px rgba(17, 17, 17, 0.1);
+    }
+
+    textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-submit {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .form-submit .btn {
+      flex: 1;
+      max-width: 200px;
+    }
+
+    /* Contact info cards */
+    .contact-info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+
+    @media (max-width: 700px) {
+      .contact-info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .info-card {
+      padding: 28px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--white);
+    }
+
+    .info-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .info-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+
+    .info-text {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .info-text a {
+      color: var(--black);
+      font-weight: 500;
+      transition: color var(--ease);
+    }
+
+    .info-text a:hover {
+      color: var(--dim);
+    }
+
+    /* Trust section */
+    .trust-section {
+      padding: 32px;
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      margin-top: 40px;
+    }
+
+    .trust-heading {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+
+    .trust-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 600px) {
+      .trust-items {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .trust-item {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .trust-item::before {
+      content: "✓ ";
+      color: var(--black);
+      font-weight: 600;
+    }
+
+    /* Ad placeholders */
+    .ad-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f5f5f5;
+      border: 1px dashed #ddd;
+      margin: 40px 0;
+      min-height: 100px;
+      font-size: 12px;
+      color: #999;
+      font-family: var(--mono);
+    }
+
+    .ad-container.ad-rectangle {
+      width: 100%;
+      max-width: 336px;
+      height: 280px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* FAQ Link section */
+    .faq-section {
+      padding: 32px;
+      background: var(--bg);
+      border-radius: 4px;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .faq-section-heading {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+
+    .faq-section-text {
+      font-size: 15px;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* Footer */
+    .site-footer {
+      padding: 28px clamp(20px, 7vw, 80px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--white);
+    }
+
+    .footer-copy {
+      font-size: 13px;
+      color: #999;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: #999;
+      transition: color var(--ease);
+    }
+
+    .footer-links a:hover {
+      color: var(--black);
+    }
+
+    @media (max-width: 600px) {
+      .site-footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .footer-links {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header" id="site-header">
+    <a href="/" class="header-logo">EasyH</a>
+    <nav class="header-nav">
+      <a href="/">Home</a>
+      <a href="/about-us.html">About Us</a>
+      <a href="/blog">Blog</a>
+      <a href="/contact-us.html" class="active">Contact</a>
+      <a href="/faq.html">FAQ</a>
+    </nav>
+  </header>
+
+  <div class="page-wrap">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <span class="hero-tag">Get In Touch</span>
+      <h1 class="hero-heading">We'd Love to Hear From You</h1>
+      <p class="hero-sub">Have questions, feedback, or need support? Our team is here to help. Reach out anytime.</p>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="section">
+      <div class="contact-section">
+        <h2 style="font-size: 28px; font-weight: 700; color: var(--black); margin-bottom: 32px;">Send us a Message</h2>
+
+        <form id="contact-form" style="max-width: 600px;">
+          <div class="form-group">
+            <label for="name">Your Name *</label>
+            <input type="text" id="name" name="name" required placeholder="John Smith" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address *</label>
+            <input type="email" id="email" name="email" required placeholder="john@example.com" />
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Subject *</label>
+            <input type="text" id="subject" name="subject" required placeholder="How can we help?" />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" name="message" required placeholder="Tell us what's on your mind..."></textarea>
+          </div>
+
+          <div class="form-submit">
+            <button type="submit" class="btn btn-primary">Send Message</button>
+          </div>
+        </form>
+
+        <div class="trust-section">
+          <h3 class="trust-heading">We Respect Your Privacy</h3>
+          <div class="trust-items">
+            <div class="trust-item">We never share your information with third parties</div>
+            <div class="trust-item">Your email will only be used to respond to your inquiry</div>
+            <div class="trust-item">Unsubscribe anytime from our communications</div>
+            <div class="trust-item">GDPR compliant and privacy-first</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad placeholder -->
+    <div style="padding: 0 clamp(20px, 7vw, 80px); display: flex; justify-content: center;">
+      <div class="ad-container ad-rectangle" id="ad-middle-1">AD SPACE — Google AdSense Ad Unit (336x280)</div>
+    </div>
+
+    <!-- Contact Info Section -->
+    <section class="section">
+      <div class="contact-section">
+        <h2 style="font-size: 28px; font-weight: 700; color: var(--black); margin-bottom: 32px;">Other Ways to Reach Us</h2>
+
+        <div class="contact-info-grid">
+          <div class="info-card">
+            <span class="info-icon">✉️</span>
+            <h3 class="info-title">Email</h3>
+            <p class="info-text">
+              For support and inquiries:<br>
+              <a href="mailto:support@easyh.space">support@easyh.space</a>
+            </p>
+          </div>
+
+          <div class="info-card">
+            <span class="info-icon">⏱️</span>
+            <h3 class="info-title">Response Time</h3>
+            <p class="info-text">
+              We typically respond to all inquiries within 24-48 hours during business days.
+            </p>
+          </div>
+
+          <div class="info-card">
+            <span class="info-icon">🌐</span>
+            <h3 class="info-title">Website</h3>
+            <p class="info-text">
+              Visit our main site for the interactive map portrait generator:<br>
+              <a href="/">easyh.space</a>
+            </p>
+          </div>
+
+          <div class="info-card">
+            <span class="info-icon">❓</span>
+            <h3 class="info-title">Questions?</h3>
+            <p class="info-text">
+              Check our <a href="/faq.html">FAQ page</a> for answers to common questions.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section">
+      <div class="contact-section">
+        <div class="faq-section">
+          <h3 class="faq-section-heading">Didn't Find What You're Looking For?</h3>
+          <p class="faq-section-text">Visit our FAQ page for quick answers to the most common questions about EasyH, pricing, customization, and technical support.</p>
+          <a href="/faq.html" class="btn btn-primary">Browse FAQ →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ad placeholder -->
+    <div style="padding: 0 clamp(20px, 7vw, 80px); display: flex; justify-content: center;">
+      <div class="ad-container ad-rectangle" id="ad-middle-2">AD SPACE — Google AdSense Ad Unit (336x280)</div>
+    </div>
+
+    <!-- Trust Signals -->
+    <section class="section">
+      <div class="contact-section">
+        <h2 style="font-size: 28px; font-weight: 700; color: var(--black); margin-bottom: 32px; text-align: center;">Why Trust EasyH?</h2>
+
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 40px;">
+          <div style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 12px;">🔒</div>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--black); margin-bottom: 8px;">Privacy First</h3>
+            <p style="font-size: 14px; color: var(--muted); line-height: 1.6;">Your data is never stored or shared. We process and discard immediately.</p>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 12px;">💯</div>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--black); margin-bottom: 8px;">100% Free</h3>
+            <p style="font-size: 14px; color: var(--muted); line-height: 1.6;">No hidden fees, no premium tiers. Always free, forever.</p>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 12px;">⚡</div>
+            <h3 style="font-size: 16px; font-weight: 600; color: var(--black); margin-bottom: 8px;">Fast Support</h3>
+            <p style="font-size: 14px; color: var(--muted); line-height: 1.6;">Quick response times and helpful support team.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-copy">© 2026 EasyH · easyh.space</div>
+    <div class="footer-links">
+      <a href="/about-us.html">About Us</a>
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms & Conditions</a>
+      <a href="/contact-us.html">Contact</a>
+      <a href="/faq.html">FAQ</a>
+      <a href="/blog">Blog</a>
+    </div>
+  </footer>
+
+  <script>
+    // Add scroll shadow to header
+    const header = document.getElementById('site-header');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 0) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+
+    // Mark active nav link
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('.header-nav a').forEach(link => {
+      if (link.getAttribute('href') === currentPath) {
+        link.classList.add('active');
+      }
+    });
+
+    // Handle form submission
+    document.getElementById('contact-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const subject = document.getElementById('subject').value;
+      const message = document.getElementById('message').value;
+
+      // Create mailto link for email
+      const mailtoLink = `mailto:support@easyh.space?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+
+      window.location.href = mailtoLink;
+
+      // Reset form
+      this.reset();
+      alert('Thank you for your message! Please send it through your email client.');
+    });
+  </script>
+</body>
+
+</html>
